@@ -13,9 +13,7 @@
 
 using namespace std;
 
-//float lumi=35917.738;
-//float lumi=41525.897;
-float lumi= 59199.566;
+float lumi=41525.897;
 
 template <typename ntupleType> class plot{
 

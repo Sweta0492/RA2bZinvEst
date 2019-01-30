@@ -242,9 +242,8 @@ int main(int argc, char** argv){
         }
 
         // weights applied here 
- //      weight = lumi*ntuple->Weight*Trigger_weights_apply(ntuple,iEvt)*ntuple->NonPrefiringProb;
+        weight = lumi*ntuple->Weight*Trigger_weights_apply(ntuple,iEvt)*ntuple->NonPrefiringProb;
   
-        weight = lumi*ntuple->Weight*Trigger_weights_apply(ntuple,iEvt);
         if( skims.sampleName[iSample] == "GJets" ) weight *= dRweights(ntuple);
 
 
@@ -296,7 +295,7 @@ int main(int argc, char** argv){
 
     }
 
-    TFile* outputFile = new TFile("plotObs_"+skims.regionNames[regInt]+"_baseline_2018.root","RECREATE");
+    TFile* outputFile = new TFile("plotObs_"+skims.regionNames[regInt]+"_baseline_2017.root","RECREATE");
 
     for( int iPlot = 0 ; iPlot < plotsAllEvents.size() ; iPlot++){
         TCanvas* can = new TCanvas("can","can",500,500);
