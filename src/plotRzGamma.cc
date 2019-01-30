@@ -183,7 +183,7 @@ int main(int argc, char** argv){
     if( DR0p4 ) 
         outputFile = new TFile("RzGamma_PUweightOnly_"+regionNames[region]+"_histo.root","RECREATE");
     else 
-        outputFile = new TFile("RzGamma_DR0p05_PUweightOnly_"+regionNames[region]+"_histo_2016.root","RECREATE");
+        outputFile = new TFile("RzGamma_DR0p05_PUweightOnly_"+regionNames[region]+"_histo_2017.root","RECREATE");
 
     TCanvas* can = new TCanvas("can","can",500,500);
 
