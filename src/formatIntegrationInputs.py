@@ -238,7 +238,7 @@ for i in range(nBins) :
         outputDict["trigWerr"].append(((dataEBHisto.GetBinContent(i+1-10)*0.00880785) + (dataEEHisto.GetBinContent(i+1-10)*0.0179556))/(dataEBHisto.GetBinContent(i+1-10)+dataEEHisto.GetBinContent(i+1-10) )) 
     else:
         outputDict["ZgR"].append(RzGamma.GetBinContent(i+1))
-        outputDict["REr1"].append(RzGamma.GetBinError(i+1))
+        outputDict["REr1"].append(RzGamma.GetBinError(i+1)/outputDict["ZgR"][i])
         outputDict["trigWerr"].append(((dataEBHisto.GetBinContent(i+1-10)*0.00880785) + (dataEEHisto.GetBinContent(i+1-10)*0.0179556))/(dataEBHisto.GetBinContent(i+1-10)+dataEEHisto.GetBinContent(i+1-10) )) 
 
     if( outputDict["nEB"][i] == 0 and outputDict["nEC"][i] == 0 ):
