@@ -197,16 +197,18 @@ int main(int argc, char** argv){
         ratio->Draw("Ap");
         writeExtraText = true;
         extraText = "Simulation";
-        lumi_13TeV = "";
+        char lumiString[4];
+        sprintf(lumiString,"%.1f fb^{-1}",lumi/1000.);
+        lumi_13TeV = lumiString;
         CMS_lumi( can , 4 , 0 );
         can->Update();
         can->RedrawAxis();
         can->GetFrame()->Draw();
     
         if( DR0p4 )
-            can->SaveAs("../plots/RzGamma_plots/"+TString(plots[iPlot].histoMap[samples[0]]->GetName())+".png");
+            can->SaveAs("../plots_2018/RzGamma_plots/"+TString(plots[iPlot].histoMap[samples[0]]->GetName())+".png");
         else
-            can->SaveAs("../plots/RzGamma_DR0p05_plots/"+TString(plots[iPlot].histoMap[samples[0]]->GetName())+".png");
+            can->SaveAs("../plots_2018/RzGamma_DR0p05_plots/"+TString(plots[iPlot].histoMap[samples[0]]->GetName())+".png");
         
    }
 

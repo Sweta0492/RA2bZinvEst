@@ -301,19 +301,19 @@ int main(int argc, char** argv){
         TCanvas* can = new TCanvas("can","can",500,500);
         can->SetTopMargin(0.05);
         plotsAllEvents[iPlot].Write();
-        plotsAllEvents[iPlot].Draw(can,skims.ntuples,skims.signalNtuples,"../plots/plotObs_baseline_plots");
+        plotsAllEvents[iPlot].Draw(can,skims.ntuples,skims.signalNtuples,"../plots_2018/plotObs_baseline_plots");
     }
     for( int iPlot = 0 ; iPlot < plotsEEevents.size() ; iPlot++){
         TCanvas* can = new TCanvas("can","can",500,500);
         can->SetTopMargin(0.05);
         plotsEEevents[iPlot].Write();
-        plotsEEevents[iPlot].Draw(can,skims.ntuples,skims.signalNtuples,"../plots/plotObs_baseline_plots");
+        plotsEEevents[iPlot].Draw(can,skims.ntuples,skims.signalNtuples,"../plots_2018/plotObs_baseline_plots");
     }
     for( int iPlot = 0 ; iPlot < plotsEBevents.size() ; iPlot++){
         TCanvas* can = new TCanvas("can","can",500,500);
         can->SetTopMargin(0.05);
         plotsEBevents[iPlot].Write();
-        plotsEBevents[iPlot].Draw(can,skims.ntuples,skims.signalNtuples,"../plots/plotObs_baseline_plots");
+        plotsEBevents[iPlot].Draw(can,skims.ntuples,skims.signalNtuples,"../plots_2018/plotObs_baseline_plots");
     }
   
     outputFile->Close();
