@@ -148,26 +148,17 @@ int main(int argc, char** argv){
             weight = 1;
             if( iEvt % 10000 == 0 ) cout << sampleNames[iSample] << ": " << iEvt << "/" << numEvents << endl;
             if( sampleNames[iSample] == "GJets" && ntuple->Photons->size() != 1 ) continue;      
+            if( sampleNames[iSample] == "GJets" && ntuple->Photons_hasPixelSeed->at(0) != 0 ) continue; 
             if( sampleNames[iSample] == "GJets" && !isPromptPhoton(ntuple) ) continue;
             if( sampleNames[iSample] == "GJets" && ntuple->Photons_fullID->at(0)!=1 ) continue;
             if( sampleNames[iSample] == "GJets" && !( ntuple->madMinPhotonDeltaR>0.4 ) ) continue;
             if( sampleNames[iSample] == "GJets" && ntuple->Photons->at(0).Pt() < 200. ) continue;      
             if( ( region == 0 && !RA2bBaselineCut(ntuple) ) || ( region == 1 && !RA2bLDPBaselineCut(ntuple) ) ) continue;
          
-            if( region == 0 )     
-	            if( sampleNames[iSample] == "GJets" && !RA2bBaselinePhotonCut(ntuple) ) continue;  
-       	    if( region == 1 )
-		    if( sampleNames[iSample] == "GJets" && !RA2bLDPBaselinePhotonCut(ntuple) ) continue;  
            // weight applied here      
-           weight = lumi*ntuple->Weight; 
-           if ( sampleNames[iSample] == "GJets" ) weight*= Trigger_weights_apply(ntuple,iEvt)*dRweights(ntuple)*ntuple->NonPrefiringProb;
-
-  
-         
-           /* if ( sampleNames[iSample] == "GJets" ) weight*= prefiring_weight_photon(ntuple,iEvt)*Trigger_weights_apply(ntuple,iEvt)*dRweights(ntuple);  
-           for (int unsigned s = 0; s < ntuple->Jets->size();s++){
-            weight*=prefiring_weight_jet(ntuple,iEvt,s);
-           }*/
+           
+            weight = lumi*ntuple->Weight; 
+            if ( sampleNames[iSample] == "GJets" ) weight*= Trigger_weights_apply(ntuple,iEvt)/*dRweights(ntuple)*/*ntuple->NonPrefiringProb;
            
             for( int iPlot = 0 ; iPlot < plots.size() ; iPlot++ ){
                 if( sampleNames[iSample] == "GJets" ) 
@@ -197,16 +188,18 @@ int main(int argc, char** argv){
         ratio->Draw("Ap");
         writeExtraText = true;
         extraText = "Simulation";
-        lumi_13TeV = "";
+        char lumiString[4];
+        sprintf(lumiString,"%.1f fb^{-1}",lumi/1000.);
+        lumi_13TeV = lumiString;
         CMS_lumi( can , 4 , 0 );
         can->Update();
         can->RedrawAxis();
         can->GetFrame()->Draw();
     
         if( DR0p4 )
-            can->SaveAs("../plots/RzGamma_plots/"+TString(plots[iPlot].histoMap[samples[0]]->GetName())+".png");
+            can->SaveAs("../plots_2017/RzGamma_plots/"+TString(plots[iPlot].histoMap[samples[0]]->GetName())+".png");
         else
-            can->SaveAs("../plots/RzGamma_DR0p05_plots/"+TString(plots[iPlot].histoMap[samples[0]]->GetName())+".png");
+            can->SaveAs("../plots_2017/RzGamma_DR0p05_plots/"+TString(plots[iPlot].histoMap[samples[0]]->GetName())+".png");
         
    }
 
