@@ -13,39 +13,33 @@ backgroundSamples=["QCD_200to300",
                    "GJets_100to200",
                    "GJets_200to400",
                    "GJets_400to600",
-                   "GJets_600toInf"
+                   "GJets_600toInf",
                    "TT_600to800",
                    "TT_800to1200",
                    "TT_1200to2500",
                    "TT_2500toInf",
-                   "Other_WWTo1L1Nu2Q"
-                   "Other_WWTo2L2Nu"
-                   "Other_WWZ"
-                   "Other_WZTo1L1Nu2Q"
-                   "Other_WZTo1L3Nu"
-                   "Other_WZZ"
-                   "Other_ZZTo2L2Q"
-                   "Other_ZZTo2Q2Nu"
-                   "Other_ZZZ"
-                   "Other_TTTT"
-                   "Other_TTWJetsToLNu"
-                   "Other_TTWJetsToQQ"
-                   "Other_TTGJets"
-                   "Other_TTZToLLNuNu"
-                   "Other_TTZToQQ"
-                   "Other_ST_s"
-                   "Other_ST_t_antitop"
-                   "Other_ST_t_top"
-                   "Other_ST_tW_antitop"
+                   "Other_WWTo1L1Nu2Q",
+                   "Other_WZTo1L1Nu2Q",
+                   "Other_WZTo1L3Nu",
+                   "Other_WZZ",
+                   "Other_ZZTo2L2Q",
+                   "Other_ZZZ",
+                   "Other_TTTT",
+                   "Other_TTWJetsToLNu",
+                   "Other_TTWJetsToQQ",
+                   "Other_TTGJets",
+                   "Other_TTZToLLNuNu",
+                   "Other_TTZToQQ",
+                   "Other_ST_s",
+                   "Other_ST_t_antitop",
+                   "Other_ST_t_top",
+                   "Other_ST_tW_antitop",
                    "Other_ST_tW_top"
                    ]
-
-dataSamples=["SinglePhoton_2017B",
-             "SinglePhoton_2017C",
-             "SinglePhoton_2017D",
-             "SinglePhoton_2017E",
-             "SinglePhoton_2017F"
-             ]
+dataSamples=["SinglePhoton_2018A",
+             "SinglePhoton_2018B",
+             "SinglePhoton_2018C",
+             "SinglePhoton_2018D"]
 
 def runPlotPurityProperties(bkg,data):
     print '../bin/plotObs_baseline 2 "{0}" "{1}"'.format(bkg,data)

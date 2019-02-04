@@ -1,71 +1,76 @@
 from ROOT import *
 from array import array
 
-#purity_fb6795fa13173ba165a794d7c5e9ee8e93864edd.log
-inputs="""REGION: EB MHT_250
-purity in SR:  0.909448602829 +/- 0.00175849101333
-purity in SR:  0.92250537873 +/- 0.00168651048145
-purity in SR:  0.934155240968 +/- 0.00161611866509
---
-REGION: EB MHT_300
-purity in SR:  0.895259343534 +/- 0.00220020823282
-purity in SR:  0.921555873299 +/- 0.00201248923669
-purity in SR:  0.932833527541 +/- 0.00193191681335
---
-REGION: EB MHT_350
-purity in SR:  0.918832059024 +/- 0.00196637806738
-purity in SR:  0.937669597677 +/- 0.00180107364461
-purity in SR:  0.949024727916 +/- 0.00170061367138
---
-REGION: EB MHT_600
-purity in SR:  0.953736575154 +/- 0.00501432539656
-purity in SR:  0.954627430692 +/- 0.00502116514239
-purity in SR:  0.974885020409 +/- 0.0040330431049
---
-REGION: EE MHT_250
-purity in SR:  0.828195630978 +/- 0.00359944666293
-purity in SR:  0.84608975362 +/- 0.00342379210452
-purity in SR:  0.876800287872 +/- 0.00326388322173
---
-REGION: EE MHT_300
-purity in SR:  0.825661589164 +/- 0.004429606355
-purity in SR:  0.855552069714 +/- 0.00423404098496
-purity in SR:  0.897146046197 +/- 0.00384357354945
---
-REGION: EE MHT_350
-purity in SR:  0.85239424673 +/- 0.00452282623542
-purity in SR:  0.852478088773 +/- 0.00456212375975
-purity in SR:  0.895745179334 +/- 0.00413718543686
---
-REGION: EE MHT_600
-purity in SR:  0.845032299913 +/- 0.0213983855021
-purity in SR:  0.79660284513 +/- 0.376359648899
-purity in SR:  0.858811224274 +/- 0.405750359561
-"""
+input_file = open('purity.log')
+
+region=""
+purity=0.0
+purity_error=0.0
 
 x=[275,325,475,800]
 xErr=[25,25,125,200]
 EB={"nom":[],"alt":[],"mcalt":[],"nomErr":[],"altErr":[],"mcaltErr":[]}
 EE={"nom":[],"alt":[],"mcalt":[],"nomErr":[],"altErr":[],"mcaltErr":[]}
-for measurement in inputs.split("--"):
-    lines = measurement[1:].split("\n")
-    print lines
-    if lines[0].find("EB") != -1 : 
-        EB["alt"].append(float(lines[1].split(":  ")[1].split(" +/- ")[0]))
-        EB["altErr"].append(float(lines[1].split(":  ")[1].split(" +/- ")[1]))
-        EB["nom"].append(float(lines[2].split(":  ")[1].split(" +/- ")[0]))
-        EB["nomErr"].append(float(lines[2].split(":  ")[1].split(" +/- ")[1]))
-        EB["mcalt"].append(float(lines[3].split(":  ")[1].split(" +/- ")[0]))
-        EB["mcaltErr"].append(float(lines[3].split(":  ")[1].split(" +/- ")[1]))
-        
-    else :
-        EE["alt"].append(float(lines[1].split(":  ")[1].split(" +/- ")[0]))
-        EE["altErr"].append(float(lines[1].split(":  ")[1].split(" +/- ")[1]))
-        EE["nom"].append(float(lines[2].split(":  ")[1].split(" +/- ")[0]))
-        EE["nomErr"].append(float(lines[2].split(":  ")[1].split(" +/- ")[1]))
-        EE["mcalt"].append(float(lines[3].split(":  ")[1].split(" +/- ")[0]))
-        EE["mcaltErr"].append(float(lines[3].split(":  ")[1].split(" +/- ")[1]))
 
+temp_purity=[]
+temp_error=[]
+
+for line in input_file:
+    line = line[:-1]
+
+    if "REGION" in line and region != line :
+        print zip(temp_purity,temp_error)
+        print "old:",region,"new:",line
+        if len(temp_purity)==3:
+            print "check"
+            if "EB" in region :
+                EB["alt"].append(temp_purity[0])
+                EB["altErr"].append(temp_error[0])
+                EB["nom"].append(temp_purity[1])
+                EB["nomErr"].append(temp_error[1])
+                EB["mcalt"].append(temp_purity[2])
+                EB["mcaltErr"].append(temp_error[2])
+            if "EE" in region :
+                EE["alt"].append(temp_purity[0])
+                EE["altErr"].append(temp_error[0])
+                EE["nom"].append(temp_purity[1])
+                EE["nomErr"].append(temp_error[1])
+                EE["mcalt"].append(temp_purity[2])
+                EE["mcaltErr"].append(temp_error[2])
+            temp_purity=[]
+            temp_error=[]
+        region=line
+
+    if "purity in SR:" in line :
+        purity=float(line.split(":")[1].split("+/-")[0])
+        purity_error=float(line.split(":")[1].split("+/-")[1])
+        print region,purity,"+/-",purity_error
+        temp_purity.append(purity)
+        temp_error.append(purity_error)
+
+if len(temp_purity)==3:
+    print "check"
+    print zip(temp_purity,temp_error)
+    print region
+    if "EB" in region :
+        EB["alt"].append(temp_purity[0])
+        EB["altErr"].append(temp_error[0])
+        EB["nom"].append(temp_purity[1])
+        EB["nomErr"].append(temp_error[1])
+        EB["mcalt"].append(temp_purity[2])
+        EB["mcaltErr"].append(temp_error[2])
+    if "EE" in region :
+        EE["alt"].append(temp_purity[0])
+        EE["altErr"].append(temp_error[0])
+        EE["nom"].append(temp_purity[1])
+        EE["nomErr"].append(temp_error[1])
+        EE["mcalt"].append(temp_purity[2])
+        EE["mcaltErr"].append(temp_error[2])
+
+for i in EB:
+    print i,EB[i]
+for i in EE:
+    print i,EE[i]
 EB["avg"] = []
 EB["avgErr"] = []
 EE["avg"] = []
@@ -199,7 +204,7 @@ SIMtext.SetTextFont(52)
 SIMtext.SetTextSize(0.045)
 SIMtext.Draw()
 
-LUMItext = TText(600,1.01,"13 TeV (35.9/fb)")
+LUMItext = TText(600,1.01,"13 TeV (59.2/fb)")
 LUMItext.SetTextFont(51)
 LUMItext.SetTextSize(0.045)
 LUMItext.Draw()
@@ -220,7 +225,6 @@ legAvg.AddEntry(nomEE,"EE","p")
 
 avgEB.Draw("Ap")
 avgEE.Draw("p")
-leg.Draw()
 
 CMStext.Draw()
 SIMtext.Draw()

@@ -14,11 +14,10 @@ backgroundSamples=["QCD_200to300",
                    "GJets_600toInf"
                     ]
 
-dataSamples=["SinglePhoton_2017B",
-             "SinglePhoton_2017C",
-             "SinglePhoton_2017D",
-             "SinglePhoton_2017E",
-             "SinglePhoton_2017F"]
+dataSamples=["SinglePhoton_2018A",
+             "SinglePhoton_2018B",
+             "SinglePhoton_2018C",
+             "SinglePhoton_2018D"]
 
 def runPlotPurityProperties(bkg,data):
     print '../bin/plotPurityProperties 3 "{0}" "{1}"'.format(bkg,data)

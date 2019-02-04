@@ -4,270 +4,198 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 
+//static const TString BASE_DIR_DATA = "/home/whitbeck/raid/CMS_DATA/SusyRA2Analysis2015/Skims/Run2ProductionV16/";
 static const TString BASE_DIR = "root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV16/";
 static const bool RE_MINIAOD = false;
- 
+
 class skimSamples{
 
-public : 
+public :
 
-    TChain *WJets, *ZJets, *QCD, *TT,*GJets,*GJets0p4,*Other,*DY; 
-    TChain *mGluino1300, *mGluino1400, *mGluino1500, *mGluino1600, *mGluino1700;
-    TChain *mHiggsino1000,*mHiggsino900,*mHiggsino800,*mHiggsino700,*mHiggsino600,*mHiggsino500,*mHiggsino400,*mHiggsino300;
-    TChain *data;
-    std::vector<RA2bTree*> ntuples,signalNtuples;
-    RA2bTree* dataNtuple;
-    std::vector<TString> sampleName, signalSampleName;
-    std::vector<TString> dataSampleName; 
-    std::vector<int> fillColor, lineColor;
-    
     enum region {kSignal,kLDP,kPhoton,kPhotonLoose,kPhotonLDP,kPhotonLDPLoose,kDYe,kDYm,kDYeLDP,kDYmLDP,kNumRegions};
-    TString regionNames[kNumRegions]={"signal","LDP","photon","photonLoose","photonLDP","photonLDPLoose","DYe","DYm","DYeLDP","DYmLDP"};
+    TString regionNames[kNumRegions]={"signal","LDP","photon","photonLoose","photonLDP","photonLDPLoose","DYe","DYm","DYeLDP","DYmLDP"};  
+  
+    map<TString,TString> fileNames;
+
+    std::vector<RA2bTree*> ntuples,signalNtuples;
+    std::vector<RA2bTree*> dataNtuple;
+    std::vector<TString> sampleName, signalSampleName;
+    std::vector<TString> dataSampleName;
 
     TString skimType;
-
-    skimSamples(region r=kPhoton){
+   
+    skimSamples(region r, vector<TString> backgrounds, vector<TString> signals, vector<TString> datas){
 
         skimType="";
 
         if( r == kSignal )
-            skimType=BASE_DIR+"tree_signal/";
+            skimType="tree_signal/";
         if( r == kLDP )
-            skimType=BASE_DIR+"tree_LDP/";
+            skimType="tree_LDP/";
         if( r == kPhoton )
-            skimType=BASE_DIR+"tree_GJet_CleanVars/";
-        if( r == kPhotonLDP )
-            skimType=BASE_DIR+"tree_GJetLDP_CleanVars/";
+            skimType="tree_GJet_CleanVars/";
+	if( r == kPhotonLDP )
+            skimType="tree_GJetLDP_CleanVars/";
         if( r == kPhotonLoose )
-            skimType=BASE_DIR+"tree_GJetLoose_CleanVars/";
+            skimType="tree_GJetLoose_CleanVars/";
         if( r == kPhotonLDPLoose )
-            skimType=BASE_DIR+"tree_GJetLooseLDP_CleanVars/";
+            skimType="tree_GJetLooseLDP_CleanVars/";
         if( r == kDYm )
-            skimType=BASE_DIR+"tree_DYm_CleanVars";
+            skimType="tree_DYm_CleanVars";
         if( r == kDYmLDP )
-            skimType=BASE_DIR+"tree_DYmLDP_CleanVars";
+            skimType="tree_DYmLDP_CleanVars";
         if( r == kDYe )
-            skimType=BASE_DIR+"tree_DYe_CleanVars";
+            skimType="tree_DYe_CleanVars";
         if( r == kDYeLDP )
-           skimType=BASE_DIR+"tree_DYeLDP_CleanVars";
-        vector<TString> ZJetsFileNames;
-        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-100to200_MC2017.root");
-        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-200to400_MC2017.root");
-        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-400to600_MC2017.root");
-        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-600to800_MC2017.root");
-        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-800to1200_MC2017.root");
-        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-1200to2500_MC2017.root");
-        ZJetsFileNames.push_back("tree_ZJetsToNuNu_HT-2500toInf_MC2017.root");
-        ZJets = new TChain("tree");
-        for( int i = 0 ; i < ZJetsFileNames.size() ; i++ ){
-            ZJets->Add(skimType+"/"+ZJetsFileNames[i]);
-        }
-        if( r == kSignal || r == kLDP ){ 
-            ntuples.push_back(new RA2bTree(ZJets));
-            sampleName.push_back("ZJets");
-            fillColor.push_back(kGreen+1);
-        }
+            skimType="tree_DYeLDP_CleanVars";
 
-        vector<TString> QCDFileNames;
-        QCDFileNames.push_back("tree_QCD_HT-200to300_MC2017.root");
-        QCDFileNames.push_back("tree_QCD_HT-300to500_MC2017.root");
-        QCDFileNames.push_back("tree_QCD_HT-500to700_MC2017.root");
-        QCDFileNames.push_back("tree_QCD_HT-700to1000_MC2017.root");
-        QCDFileNames.push_back("tree_QCD_HT-1000to1500_MC2017.root");
-        QCDFileNames.push_back("tree_QCD_HT-1500to2000_MC2017.root");
-        QCDFileNames.push_back("tree_QCD_HT-2000toInf_MC2017.root");
-        QCD = new TChain("tree");
-        for( int i = 0 ; i < QCDFileNames.size() ; i++ ){
-            QCD->Add(skimType+"/"+QCDFileNames[i]);
-        }
-        if( r == kSignal || r == kLDP || r == kPhoton || r == kPhotonLDP || r == kPhotonLoose || r == kPhotonLDPLoose ){ 
-            ntuples.push_back(new RA2bTree(QCD));
-            sampleName.push_back("QCD");
-            fillColor.push_back(kGray);
-        }
+        ///////////////////////////////////////////////////////////////////////
+        // - - - - - - - - - - BACKGROUND INPUTS - - - - - - - - - - - - - - //
+        ///////////////////////////////////////////////////////////////////////
+        fileNames["ZJets_100to200"]   = "tree_ZJetsToNuNu_HT-100to200_MC2017.root";
+        fileNames["ZJets_200to400"]   = "tree_ZJetsToNuNu_HT-200to400_MC2017.root";
+        fileNames["ZJets_400to600"]   = "tree_ZJetsToNuNu_HT-400to600_MC2017.root";
+        fileNames["ZJets_600to800"]   = "tree_ZJetsToNuNu_HT-600to800_MC2017.root";
+        fileNames["ZJets_800to1200"]  = "tree_ZJetsToNuNu_HT-800to1200_MC2017.root";
+        fileNames["ZJets_1200to2500"] = "tree_ZJetsToNuNu_HT-1200to2500_MC2017.root";
+        fileNames["ZJets_2500toInf"]  = "tree_ZJetsToNuNu_HT-2500toInf_MC2017.root";
 
-        vector<TString> WJetsFileNames;
-        WJetsFileNames.push_back("tree_WJetsToLNu_HT-100to200_MC2017.root");
-        WJetsFileNames.push_back("tree_WJetsToLNu_HT-1200to2500_MC2017.root");
-        WJetsFileNames.push_back("tree_WJetsToLNu_HT-200to400_MC2017.root");
-        WJetsFileNames.push_back("tree_WJetsToLNu_HT-2500toInf_MC2017.root");
-        WJetsFileNames.push_back("tree_WJetsToLNu_HT-400to600_MC2017.root");
-        WJetsFileNames.push_back("tree_WJetsToLNu_HT-600to800_MC2017.root");
-        WJetsFileNames.push_back("tree_WJetsToLNu_HT-800to1200_MC2017.root");
-        WJets = new TChain("tree");
-        for( int i = 0 ; i < WJetsFileNames.size() ; i++ ){
-            WJets->Add(skimType+"/"+WJetsFileNames[i]);
-        }
-        if( r == kSignal || r == kLDP ){
-            ntuples.push_back(new RA2bTree(WJets));
-            sampleName.push_back("WJets");
-            fillColor.push_back(kBlue);
-        }
+        fileNames["QCD_200to300"]    = "tree_QCD_HT-200to300_MC2017.root";
+        fileNames["QCD_300to500"]    = "tree_QCD_HT-300to500_MC2017.root";
+        fileNames["QCD_500to700"]    = "tree_QCD_HT-500to700_MC2017.root";
+        fileNames["QCD_700to1000"]   = "tree_QCD_HT-700to1000_MC2017.root";
+        fileNames["QCD_1000to1500"]  = "tree_QCD_HT-1000to1500_MC2017.root";
+        fileNames["QCD_1500to2000"]  = "tree_QCD_HT-1500to2000_MC2017.root";
+        fileNames["QCD_2000toInf"]   = "tree_QCD_HT-2000toInf_MC2017.root";
 
-       vector<TString> TTFileNames;
-        TTFileNames.push_back("tree_TTJets_HT-1200to2500_MC2017.root");
-        TTFileNames.push_back("tree_TTJets_HT-2500toInf_MC2017.root");
-        TTFileNames.push_back("tree_TTJets_HT-600to800_MC2017.root");
-        TTFileNames.push_back("tree_TTJets_HT-800to1200_MC2017.root");
-        TT = new TChain("tree");
-        for( int i = 0 ; i < TTFileNames.size() ; i++ ){
-            TT->Add(skimType+"/"+TTFileNames[i]);
-        }
-        ntuples.push_back(new RA2bTree(TT));
-        sampleName.push_back("TT");
-        fillColor.push_back(kCyan);
+        fileNames["WJets_100to200"]   = "tree_WJetsToLNu_HT-100to200_MC2017.root";
+        fileNames["WJets_200to400"]   = "tree_WJetsToLNu_HT-200to400_MC2017.root";
+        fileNames["WJets_400to600"]   = "tree_WJetsToLNu_HT-400to600_MC2017.root";
+        fileNames["WJets_600to800"]   = "tree_WJetsToLNu_HT-600to800_MC2017.root";
+        fileNames["WJets_800to1200"]  = "tree_WJetsToLNu_HT-800to1200_MC2017.root";
+        fileNames["WJets_1200to2500"] = "tree_WJetsToLNu_HT-1200to2500_MC2017.root";
+        fileNames["WJets_2500toInf"]  = "tree_WJetsToLNu_HT-2500toInf_MC2017.root";
+
+        fileNames["TT_600to800"] = "tree_TTJets_HT-600to800_MC2017.root";
+        fileNames["TT_800to1200"] = "tree_TTJets_HT-800to1200_MC2017.root";
+        fileNames["TT_1200to2500"] = "tree_TTJets_HT-1200to2500_MC2017.root";
+        fileNames["TT_2500toInf"] = "tree_TTJets_HT-2500toInf_MC2017.root";
 
 
-        vector<TString> OtherFileNames;
-        OtherFileNames.push_back("tree_ST_s-channel_MC2017.root");
-        OtherFileNames.push_back("tree_ST_t-channel_antitop_MC2017.root");
-        OtherFileNames.push_back("tree_ST_t-channel_top_MC2017.root");
-        OtherFileNames.push_back("tree_ST_tW_antitop_MC2017.root");
-        OtherFileNames.push_back("tree_ST_tW_top_MC2017.root");
-        OtherFileNames.push_back("tree_WWTo1L1Nu2Q_MC2017.root");
-       // OtherFileNames.push_back("tree_WWTo2L2Nu_MC2017.root");
-       // OtherFileNames.push_back("tree_WWZ_MC2017.root");
-        OtherFileNames.push_back("tree_WZTo1L1Nu2Q_MC2017.root");
-        OtherFileNames.push_back("tree_WZTo1L3Nu_MC2017.root");
-        OtherFileNames.push_back("tree_WZZ_MC2017.root");
-        OtherFileNames.push_back("tree_ZZTo2L2Q_MC2017.root");
-        //OtherFileNames.push_back("tree_ZZTo2Q2Nu_MC2017.root");
-        OtherFileNames.push_back("tree_ZZZ_MC2017.root");
-        OtherFileNames.push_back("tree_TTTT_MC2017.root");
-        OtherFileNames.push_back("tree_TTWJetsToLNu_MC2017.root");
-        OtherFileNames.push_back("tree_TTWJetsToQQ_MC2017.root");
-        OtherFileNames.push_back("tree_TTGJets_MC2017.root");
-        OtherFileNames.push_back("tree_TTZToLLNuNu_MC2017.root");
-        OtherFileNames.push_back("tree_TTZToQQ_MC2017.root");
-        Other = new TChain("tree");
-        for( int i = 0 ; i < OtherFileNames.size() ; i++ ){
-            Other->Add(skimType+"/"+OtherFileNames[i]);
-        }
-        ntuples.push_back(new RA2bTree(Other));
-        sampleName.push_back("Other");
-        fillColor.push_back(kRed+1);
+        fileNames["DY_100to200"] = "tree_DYJetsToLL_M-50_HT-100to200_MC2017.root";
+        fileNames["DY_200to400"] = "tree_DYJetsToLL_M-50_HT-200to400_MC2017.root";
+        fileNames["DY_400to600"] = "tree_DYJetsToLL_M-50_HT-400to600_MC2017.root";
+        fileNames["DY_600toInf"] = "tree_DYJetsToLL_M-50_HT-600toInf_MC2017.root";
 
-        vector<TString> DYFileNames;
-        DYFileNames.push_back("tree_DYJetsToLL_M-50_HT-100to200_MC2017.root");
-        DYFileNames.push_back("tree_DYJetsToLL_M-50_HT-200to400_MC2017.root");
-        DYFileNames.push_back("tree_DYJetsToLL_M-50_HT-400to600_MC2017.root");
-        DYFileNames.push_back("tree_DYJetsToLL_M-50_HT-600toInf_MC2017.root");
-        DY = new TChain("tree");
-        for( int i = 0 ; i < DYFileNames.size() ; i++ ){
-            DY->Add(skimType+"/"+DYFileNames[i]);
-        }
-        if( r == kDYe || r == kDYm || r == kDYeLDP || r == kDYmLDP ){
-            ntuples.push_back(new RA2bTree(DY));
-            sampleName.push_back("DY");
-            fillColor.push_back(kGreen);
-        }
+        fileNames["GJets0p4_100to200"] = "tree_GJets_DR-0p4_HT-100to200_MC2017.root";
+        fileNames["GJets0p4_200to400"] = "tree_GJets_DR-0p4_HT-200to400_MC2017.root";
+        fileNames["GJets0p4_400to600"] = "tree_GJets_DR-0p4_HT-400to600_MC2017.root";
+        fileNames["GJets0p4_600toInf"] = "tree_GJets_DR-0p4_HT-600toInf_MC2017.root";
+	
+        fileNames["GJets_100to200"] = "tree_GJets_HT-100to200_MC2017.root";
+        fileNames["GJets_200to400"] = "tree_GJets_HT-200to400_MC2017.root";
+        fileNames["GJets_400to600"] = "tree_GJets_HT-400to600_MC2017.root";
+        fileNames["GJets_600toInf"] = "tree_GJets_HT-600toInf_MC2017.root";
 
-        vector<TString> GJets0p4FileNames;
-        /*GJets0p4FileNames.push_back("tree_GJets_DR-0p4_HT-100to200_MC2017.root");
-        GJets0p4FileNames.push_back("tree_GJets_DR-0p4_HT-200to400_MC2017.root");
-        GJets0p4FileNames.push_back("tree_GJets_DR-0p4_HT-400to600_MC2017.root");
-        GJets0p4FileNames.push_back("tree_GJets_DR-0p4_HT-600toInf_MC2017.root");
-      */  GJets0p4FileNames.push_back("tree_GJets_HT-100to200_MC2017.root");
-        GJets0p4FileNames.push_back("tree_GJets_HT-200to400_MC2017.root");
-        GJets0p4FileNames.push_back("tree_GJets_HT-400to600_MC2017.root");
-        GJets0p4FileNames.push_back("tree_GJets_HT-600toInf_MC2017.root");
-        GJets0p4 = new TChain("tree");
-        for( int i = 0 ; i < GJets0p4FileNames.size() ; i++ ){
-            GJets0p4->Add(skimType+"/"+GJets0p4FileNames[i]);
-        }
-        if( r == kPhoton || r== kPhotonLDP || r == kPhotonLoose || r == kPhotonLDPLoose ){
-        ntuples.push_back(new RA2bTree(GJets0p4));
-        sampleName.push_back("GJets");
-        fillColor.push_back(kGreen);
-        }
+        fileNames["Other_WWTo1L1Nu2Q"] = "tree_WWTo1L1Nu2Q_MC2017.root";
+        fileNames["Other_WWTo2L2Nu"] = "tree_WWTo2L2Nu_MC2017.root";
+        fileNames["Other_WWZ"] = "tree_WWZ_MC2017.root";
+        fileNames["Other_WZTo1L1Nu2Q"] = "tree_WZTo1L1Nu2Q_MC2017.root";
+        fileNames["Other_WZTo1L3Nu"] = "tree_WZTo1L3Nu_MC2017.root";
+        fileNames["Other_WZZ"] = "tree_WZZ_MC2017.root";
+        fileNames["Other_ZZTo2L2Q"] = "tree_ZZTo2L2Q_MC2017.root";
+        fileNames["Other_ZZTo2Q2Nu"] = "tree_ZZTo2Q2Nu_MC2017.root";
+        fileNames["Other_ZZZ"] = "tree_ZZZ_MC2017.root";
+        fileNames["Other_TTTT"] = "tree_TTTT_MC2017.root";
+        fileNames["Other_TTWJetsToLNu"] = "tree_TTWJetsToLNu_MC2017.root";
+        fileNames["Other_TTWJetsToQQ"] = "tree_TTWJetsToQQ_MC2017.root";
+        fileNames["Other_TTGJets"] = "tree_TTGJets_MC2017.root";
+        fileNames["Other_TTZToLLNuNu"] = "tree_TTZToLLNuNu_MC2017.root";
+        fileNames["Other_TTZToQQ"] = "tree_TTZToQQ_MC2017.root";
+        fileNames["Other_ST_s"] = "tree_ST_s-channel_MC2017.root";
+        fileNames["Other_ST_t_antitop"] = "tree_ST_t-channel_antitop_MC2017.root";
+        fileNames["Other_ST_t_top"] = "tree_ST_t-channel_top_MC2017.root";
+        fileNames["Other_ST_tW_antitop"] = "tree_ST_tW_antitop_MC2017.root";
+        fileNames["Other_ST_tW_top"] = "tree_ST_tW_top_MC2017.root";
 
-        vector<TString> GJetsFileNames;
-        GJetsFileNames.push_back("tree_GJets_HT-100to200_MC2017.root");
-        GJetsFileNames.push_back("tree_GJets_HT-200to400_MC2017.root");
-        GJetsFileNames.push_back("tree_GJets_HT-400to600_MC2017.root");
-        GJetsFileNames.push_back("tree_GJets_HT-600toInf_MC2017.root");
-        GJets = new TChain("tree");
-        for( int i = 0 ; i < GJetsFileNames.size() ; i++ ){
-       GJets->Add(skimType+"/"+GJetsFileNames[i]);
-}
-        vector<TString> HTMHTFileNames;
-        TString basename;
-        if( RE_MINIAOD )
-            basename="tree_HTMHT_re";
-        else 
-            basename="tree_HTMHT_";
-        HTMHTFileNames.push_back(basename+"2017B.root");
-        HTMHTFileNames.push_back(basename+"2017C.root");
-        HTMHTFileNames.push_back(basename+"2017D.root");
-        HTMHTFileNames.push_back(basename+"2017E.root");
-        HTMHTFileNames.push_back(basename+"2017F.root");
+        fileNames["HTMHT_2016B"] = "tree_HTMHT_2016B.root";
+        fileNames["HTMHT_2016C"] = "tree_HTMHT_2016C.root";
+        fileNames["HTMHT_2016D"] = "tree_HTMHT_2016D.root";
+        fileNames["HTMHT_2016E"] = "tree_HTMHT_2016E.root";
+        fileNames["HTMHT_2016F"] = "tree_HTMHT_2016F.root";
+        fileNames["HTMHT_2016G"] = "tree_HTMHT_2016G.root";
+        fileNames["HTMHT_2016H"] = "tree_HTMHT_2016H.root";
 
-        if( r == kSignal || r == kLDP ){
-            data = new TChain("tree");
-            for( int i = 0 ; i < HTMHTFileNames.size() ; i++ ){
-                data->Add(skimType+"/"+HTMHTFileNames[i]);
-            }    
-            dataNtuple = new RA2bTree(data); 
-        }
+        fileNames["SingleElectron_2016C"] = "tree_SingleElectron_2016C.root";
+        fileNames["SingleElectron_2016D"] = "tree_SingleElectron_2016D.root";
+        fileNames["SingleElectron_2016E"] = "tree_SingleElectron_2016E.root";
+        fileNames["SingleElectron_2016F"] = "tree_SingleElectron_2016F.root";
+        fileNames["SingleElectron_2016G"] = "tree_SingleElectron_2016G.root";
+        fileNames["SingleElectron_2016H"] = "tree_SingleElectron_2016H.root";
 
-        vector<TString> SingleElectronNames;
-        if( RE_MINIAOD )
-            basename="tree_SingleElectron_re";
-        else 
-            basename="tree_SingleElectron_";
-        SingleElectronNames.push_back(basename+"2017B.root");
-        SingleElectronNames.push_back(basename+"2017C.root");
-        SingleElectronNames.push_back(basename+"2017D.root");
-        SingleElectronNames.push_back(basename+"2017E.root");
-        SingleElectronNames.push_back(basename+"2017F.root");
+        fileNames["SingleMuon_2016B"] = "tree_SingleMuon_2016B.root";
+        fileNames["SingleMuon_2016C"] = "tree_SingleMuon_2016C.root";
+        fileNames["SingleMuon_2016D"] = "tree_SingleMuon_2016D.root";
+        fileNames["SingleMuon_2016E"] = "tree_SingleMuon_2016E.root";
+        fileNames["SingleMuon_2016F"] = "tree_SingleMuon_2016F.root";
+        fileNames["SingleMuon_2016G"] = "tree_SingleMuon_2016G.root";
+        fileNames["SingleMuon_2016H"] = "tree_SingleMuon_2016H.root";
 
-        if( r == kDYe || r == kDYeLDP ){
-            data = new TChain("tree");
-            for( int i = 0 ; i < SingleElectronNames.size() ; i++ ){
-                data->Add(skimType+"/"+SingleElectronNames[i]);
-            }
-            dataNtuple = new RA2bTree(data);
-        }
+ 	fileNames["SinglePhoton_2016B"] = "tree_SinglePhoton_2016B.root";
+ 	fileNames["SinglePhoton_2016C"] = "tree_SinglePhoton_2016C.root";
+ 	fileNames["SinglePhoton_2016D"] = "tree_SinglePhoton_2016D.root";
+ 	fileNames["SinglePhoton_2016E"] = "tree_SinglePhoton_2016E.root";
+ 	fileNames["SinglePhoton_2016F"] = "tree_SinglePhoton_2016F.root";
+ 	fileNames["SinglePhoton_2016G"] = "tree_SinglePhoton_2016G.root";
+ 	fileNames["SinglePhoton_2016H"] = "tree_SinglePhoton_2016H.root";
 
-        vector<TString> SingleMuonNames;
-        if( RE_MINIAOD )
-            basename="tree_SingleMuon_re";
-        else 
-            basename="tree_SingleMuon_";
-        SingleMuonNames.push_back(basename+"2017B.root");
-        SingleMuonNames.push_back(basename+"2017C.root");
-        SingleMuonNames.push_back(basename+"2017D.root");
-        SingleMuonNames.push_back(basename+"2017E.root");
-        SingleMuonNames.push_back(basename+"2017F.root");
+ 	fileNames["SinglePhoton_2017B"] = "tree_SinglePhoton_2017B.root";
+ 	fileNames["SinglePhoton_2017C"] = "tree_SinglePhoton_2017C.root";
+ 	fileNames["SinglePhoton_2017D"] = "tree_SinglePhoton_2017D.root";
+ 	fileNames["SinglePhoton_2017E"] = "tree_SinglePhoton_2017E.root";
+ 	fileNames["SinglePhoton_2017F"] = "tree_SinglePhoton_2017F.root";
 
-        if( r == kDYm || r == kDYmLDP ){
-            data = new TChain("tree");
-            for( int i = 0 ; i < SingleMuonNames.size() ; i++ ){
-                data->Add(skimType+"/"+SingleMuonNames[i]);
-            }
-            dataNtuple = new RA2bTree(data);
-        }
+ 	fileNames["SinglePhoton_2018A"] = "tree_EGamma_2018A.root";
+	fileNames["SinglePhoton_2018B"] = "tree_EGamma_2018B.root";
+ 	fileNames["SinglePhoton_2018C"] = "tree_EGamma_2018C.root";
+        fileNames["SinglePhoton_2018D"] = "tree_EGamma_2018D.root";
 
-        vector<TString> SinglePhotonFileNames;
-        if( RE_MINIAOD )
-            basename="tree_SinglePhoton_re";
-        else
-            basename="tree_SinglePhoton_";
 
-       SinglePhotonFileNames.push_back("tree_EGamma_2018A.root");
-       SinglePhotonFileNames.push_back("tree_EGamma_2018B.root");
-       SinglePhotonFileNames.push_back("tree_EGamma_2018C.root");
-       SinglePhotonFileNames.push_back("tree_EGamma_2018D.root");
+	for( auto name : backgrounds ){
 
-       if( r == kPhoton || r == kPhotonLDP || r == kPhotonLoose || r == kPhotonLDPLoose ){
-            data = new TChain("tree");
-            for( int i = 0 ; i < SinglePhotonFileNames.size() ; i++ ){
-                data->Add(skimType+"/"+SinglePhotonFileNames[i]);
-            }
-            dataNtuple = new RA2bTree(data);
-        }
+	  if( fileNames.find(name) != fileNames.end() ){
+	    TChain* temp = new TChain("tree");
+	    temp->Add(BASE_DIR+skimType+"/"+fileNames[name]);	  
+	    ntuples.push_back(new RA2bTree(temp));
+	    sampleName.push_back(name);
+	  }
 
+	}	    
+
+	for( auto name : signals ){
+
+	  if( fileNames.find(name) != fileNames.end() ){
+	    TChain* temp = new TChain("tree");
+	    temp->Add(BASE_DIR+skimType+"/"+fileNames[name]);	  
+	    signalNtuples.push_back(new RA2bTree(temp));
+	    signalSampleName.push_back(name);
+	  }
+
+	}	    
+
+	for( auto name : datas ){
+
+	  if( fileNames.find(name) != fileNames.end() ){
+	    TChain* temp = new TChain("tree");
+	    temp->Add(BASE_DIR+skimType+"/"+fileNames[name]);	  
+	    dataNtuple.push_back(new RA2bTree(temp));
+	    dataSampleName.push_back(name);
+	  }
+
+	}	    
+       
     };
 
     void dumpRegions(){

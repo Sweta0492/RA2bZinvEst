@@ -31,11 +31,13 @@ if region == "signal" :
     MChistoFileName = "plotObs_photon_baseline_2018.root"
     MChistoTag = "AnalysisBins_BTag0_photon_baseline"
 
-    RzgHistoFileName = "RzGamma_DR0p05_PUweightOnly_signal_histo_2018.root"
+    RzgHistoFileName = "RzGamma_PUweightOnly_signal_histo_2018.root"
     RzgHistoTag = "AnalysisBins_BTag0_RzGamma_signal"
    
-    fragmentationFileName = "fragmentation_28_jan.txt"
+    fragmentationFileName = "../data/fragmentation_28_jan.txt"
+ 
     purityFileName = "../data/purity_2018.txt"
+ 
     outputFileName = "gJets_signal_2018.dat"
 
 elif region == "ldp" : 
@@ -68,9 +70,9 @@ yieldInputFile = TFile(MChistoFileName,"READ")
 GJetsEBHisto = yieldInputFile.Get(MChistoTag+"_EB_GJets")
 GJetsEEHisto = yieldInputFile.Get(MChistoTag+"_EE_GJets")
 GJetsHisto = yieldInputFile.Get(MChistoTag+"_GJets")
-dataHisto = yieldInputFile.Get(MChistoTag+"_data")
-dataEBHisto = yieldInputFile.Get(MChistoTag+"_EB_data")
-dataEEHisto = yieldInputFile.Get(MChistoTag+"_EE_data")
+dataHisto = yieldInputFile.Get(MChistoTag+"_Data")
+dataEBHisto = yieldInputFile.Get(MChistoTag+"_EB_Data")
+dataEEHisto = yieldInputFile.Get(MChistoTag+"_EE_Data")
 
 
 if GJetsEBHisto.GetNbinsX() != GJetsEEHisto.GetNbinsX() : 
@@ -91,16 +93,17 @@ if dataEEHisto.GetNbinsX() != GJetsEEHisto.GetNbinsX() :
 
 print "================ RzGamma =============="
 ratioInputFile = TFile(RzgHistoFileName)
-ZJetsHisto_Rzg = TH1F(ratioInputFile.Get(RzgHistoTag+"_ZJets"))
+ZJetsHisto_Rzg = TH1D(ratioInputFile.Get(RzgHistoTag+"_ZJets"))
 ZJetsHisto_Rzg.SetNameTitle("ZJetsHisto_Rzg","ZJetsHisto_Rzg")
-GJetsHisto_Rzg = TH1F(ratioInputFile.Get(RzgHistoTag+"_GJets"))
+GJetsHisto_Rzg = TH1D(ratioInputFile.Get(RzgHistoTag+"_GJets"))
 GJetsHisto_Rzg.SetNameTitle("GJetsHisto_Rzg","GJetsHisto_Rzg")
-RzGamma = TH1F(ZJetsHisto_Rzg)
+RzGamma = TH1D(ZJetsHisto_Rzg)
 print "ZJets:",RzGamma.GetBinContent(1)
 RzGamma.SetNameTitle("RzGamma","RzGamma")
 RzGamma.Divide(GJetsHisto_Rzg)
 print "GJets:",GJetsHisto_Rzg.GetBinContent(1)
 print "GJets/ZJets:",RzGamma.GetBinContent(1)
+RzGamma.Scale(1./1.16)
 print "RzG:",RzGamma.GetBinContent(1)
 
 if RzGamma.GetNbinsX() != GJetsEEHisto.GetNbinsX() :
@@ -227,7 +230,6 @@ for i in range(nBins) :
     outputDict["pEC"].append(purityEEAll[i])
     outputDict["pECerr"].append(purityEEerrAll[i]/outputDict["pEC"][i])
     
-
     if ( i >= 30 and i < 38 ) :
         outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-10))
         outputDict["REr1"].append(RzGamma.GetBinError(i+1-10)/outputDict["ZgR"][i+1-10])
@@ -240,6 +242,7 @@ for i in range(nBins) :
         outputDict["ZgR"].append(RzGamma.GetBinContent(i+1))
         outputDict["REr1"].append(RzGamma.GetBinError(i+1)/outputDict["ZgR"][i])
         outputDict["trigWerr"].append(((dataEBHisto.GetBinContent(i+1-10)*0.00880785) + (dataEEHisto.GetBinContent(i+1-10)*0.0179556))/(dataEBHisto.GetBinContent(i+1-10)+dataEEHisto.GetBinContent(i+1-10) )) 
+
 
     if( outputDict["nEB"][i] == 0 and outputDict["nEC"][i] == 0 ):
         outputDict["purity"].append(1.)
@@ -339,4 +342,4 @@ LUMItext.SetTextSize(0.045)
 #LUMItext.Draw()
 
 
-can.SaveAs("prediction_2018.png")
+can.SaveAs("prediction_2016.png")
