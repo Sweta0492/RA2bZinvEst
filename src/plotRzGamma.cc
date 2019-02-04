@@ -132,7 +132,7 @@ int main(int argc, char** argv){
     samples.push_back(new RA2bTree(GJets));
     sampleNames.push_back("GJets");
 
-    Trigger_weights();                      // Initiating trigger Weight Efficiency here
+    trig_eff_func();                      // trigger Weight Efficiency here
 
     for( int iSample = 0 ; iSample < samples.size() ; iSample++){
         RA2bTree* ntuple = samples[iSample];
@@ -158,7 +158,7 @@ int main(int argc, char** argv){
            // weight applied here      
            
             weight = lumi*ntuple->Weight; 
-            if ( sampleNames[iSample] == "GJets" ) weight*= Trigger_weights_apply(ntuple,iEvt)/*dRweights(ntuple)*/*ntuple->NonPrefiringProb;
+            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple,iEvt)/*dRweights(ntuple)*/*ntuple->NonPrefiringProb;
            
             for( int iPlot = 0 ; iPlot < plots.size() ; iPlot++ ){
                 if( sampleNames[iSample] == "GJets" ) 
@@ -172,7 +172,7 @@ int main(int argc, char** argv){
 
     TFile* outputFile;
     if( DR0p4 ) 
-        outputFile = new TFile("RzGamma_PUweightOnly_"+regionNames[region]+"_histo.root","RECREATE");
+        outputFile = new TFile("RzGamma_PUweightOnly_"+regionNames[region]+"_histo_2017.root","RECREATE");
     else 
         outputFile = new TFile("RzGamma_DR0p05_PUweightOnly_"+regionNames[region]+"_histo_2017.root","RECREATE");
 

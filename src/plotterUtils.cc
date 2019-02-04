@@ -1,6 +1,6 @@
 #include "TGraphAsymmErrors.h"
 #include "THStack.h"
-#include "TH1F.h"
+#include "TH1D.h"
 #include "TString.h"
 #include "TCanvas.h"
 #include "TLegend.h"
@@ -24,7 +24,10 @@ template <typename ntupleType> class plot{
     label = label_;
     xlabel = "" ; 
     nbins = 40; lower = 200.; upper = 1200.;
-    binEdges = NULL;
+    //binEdges = NULL;
+    for( int ibin=1 ; ibin<nbins+1 ; ibin++ ){
+      binEdges[ibin]=binEdges[ibin-1]+(upper-lower)/nbins;
+    }
     stack=new THStack(label+"_stack",label+"_stack");
     dataHist=NULL;
   };
@@ -36,7 +39,11 @@ template <typename ntupleType> class plot{
     label = label_;
     xlabel =xlabel_ ; 
     nbins = nbins_; lower = lower_; upper = upper_;
-    binEdges=NULL;
+    //binEdges=NULL;
+    binEdges.push_back(lower);
+    for( int ibin=1 ; ibin<nbins+1 ; ibin++ ){
+      binEdges.push_back(binEdges[ibin-1]+(upper-lower)/nbins);
+    }
     stack=new THStack(label+"_stack",label+"_stack");
   };
 
@@ -46,7 +53,7 @@ template <typename ntupleType> class plot{
     fillerFunc = fillerFunc_;
     label = label_;
     xlabel =xlabel_ ; 
-    binEdges = bins_;
+    binEdges.assign(bins_,bins_+nbins_+1);
     nbins = nbins_; lower = binEdges[0]; upper = binEdges[nbins];
     stack=new THStack(label+"_stack",label+"_stack");
   };
@@ -58,20 +65,20 @@ template <typename ntupleType> class plot{
   void addNtuple(ntupleType* ntuple_,TString tag="test"){ 
     //cout << "nbins: " << nbins << " lower: " << lower << " upper: " << upper << endl;
     tagMap[ntuple_] = tag;
-    if( binEdges )
-      histoMap[ntuple_] = new TH1F(label+"_"+tag,label+"_"+tag,nbins,binEdges);
+    if( binEdges.size() )
+      histoMap[ntuple_] = new TH1D(label+"_"+tag,xlabel,nbins,&binEdges[0]);
     else
-      histoMap[ntuple_] = new TH1F(label+"_"+tag,label+"_"+tag,nbins,lower,upper);
+      histoMap[ntuple_] = new TH1D(label+"_"+tag,xlabel,nbins,lower,upper);
     histoMap[ntuple_]->Sumw2();
   };
 
   void addSignalNtuple(ntupleType* ntuple_,TString tag="test"){ 
     //cout << "nbins: " << nbins << " lower: " << lower << " upper: " << upper << endl;
     tagMap[ntuple_] = tag;
-    if( binEdges )
-      signalHistoMap[ntuple_] = new TH1F(label+"_"+tag,label+"_"+tag,nbins,binEdges);   
+    if( binEdges.size() )
+      signalHistoMap[ntuple_] = new TH1D(label+"_"+tag,xlabel,nbins,&binEdges[0]);   
     else
-      signalHistoMap[ntuple_] = new TH1F(label+"_"+tag,label+"_"+tag,nbins,lower,upper);
+      signalHistoMap[ntuple_] = new TH1D(label+"_"+tag,xlabel,nbins,lower,upper);
 
     signalHistoMap[ntuple_]->Sumw2();
   };
@@ -79,10 +86,10 @@ template <typename ntupleType> class plot{
   void addDataNtuple(ntupleType* ntuple_,TString tag="test"){
     //cout << "nbins: " << nbins << " lower: " << lower << " upper: " << upper << endl;
     tagMap[ntuple_] = tag ;
-    if( binEdges ){
-        dataHist = new TH1F(label+"_"+tag,label+"_"+tag,nbins,binEdges);
+    if( binEdges.size() ){
+        dataHist = new TH1D(label+"_"+tag,xlabel,nbins,&binEdges[0]);
     }else
-      dataHist = new TH1F(label+"_"+tag,label+"_"+tag,nbins,lower,upper);
+      dataHist = new TH1D(label+"_"+tag,xlabel,nbins,lower,upper);
     dataHist->SetMarkerStyle(8);
   };
   
@@ -123,10 +130,14 @@ template <typename ntupleType> class plot{
   };
 
   int fillData(ntupleType* ntuple ){
-    if( dataHist )
+    //cout << "[[plot::fillData]]" << dataHist << endl;
+    if( dataHist ){
+      //cout << "result: " << fillerFunc(ntuple) << endl;
       return dataHist->Fill(fillerFunc(ntuple));
-    else 
+    }else{
+      //cout << "dataHist: " << dataHist << endl;
       return 0;
+    }
   };
     
   int fillData(ntupleType* ntuple , float customWeight ){
@@ -165,7 +176,7 @@ template <typename ntupleType> class plot{
   void buildStack(){
     
     vector<ntupleType*> ntuples;
-    for( typename map<ntupleType*,TH1F*>::iterator it = histoMap.begin() ;
+    for( typename map<ntupleType*,TH1D*>::iterator it = histoMap.begin() ;
 	 it != histoMap.end() ; 
 	 ++it){
       ntuples.push_back(it->first);
@@ -175,11 +186,11 @@ template <typename ntupleType> class plot{
 
   void buildSum(){
     sum = NULL;
-    for( typename map<ntupleType*,TH1F*>::iterator it = histoMap.begin() ;
+    for( typename map<ntupleType*,TH1D*>::iterator it = histoMap.begin() ;
 	 it != histoMap.end() ; 
 	 ++it){
       if( sum == NULL ){
-	sum = new TH1F(*(it->second));
+	sum = new TH1D(*(it->second));
 	sum->SetNameTitle(label+"_sum",label+"_sum");
       }else
 	sum->Add(it->second);
@@ -188,14 +199,14 @@ template <typename ntupleType> class plot{
 
   void Write(){
 
-    for( typename map<ntupleType*,TH1F*>::iterator it = histoMap.begin() ;
+    for( typename map<ntupleType*,TH1D*>::iterator it = histoMap.begin() ;
 	 it != histoMap.end() ; 
 	 ++it ){
       if( it->second ) 
 	it->second->Write();
     }
 
-    for( typename map<ntupleType*,TH1F*>::iterator it = signalHistoMap.begin() ;
+    for( typename map<ntupleType*,TH1D*>::iterator it = signalHistoMap.begin() ;
 	 it != signalHistoMap.end() ; 
 	 ++it ){
       if( it->second ) 
@@ -204,6 +215,20 @@ template <typename ntupleType> class plot{
     if( dataHist )
       dataHist->Write();
 
+  };
+
+  void Write(ntupleType* ntuple){
+
+    if( histoMap.find(ntuple) != histoMap.end() )
+      histoMap[ntuple]->Write();
+
+    if( signalHistoMap.find(ntuple) != signalHistoMap.end() )
+      signalHistoMap[ntuple]->Write();
+
+  };
+
+  void WriteData(){
+    dataHist->Write();
   };
 
   void Draw(TCanvas* can,
@@ -227,7 +252,6 @@ template <typename ntupleType> class plot{
     if( histoMap.size() ){
       buildStack(ntuples);
       stack->Draw("histo");
-      cout << "xlabel: " << xlabel << endl;
       stack->GetXaxis()->SetTitle(xlabel);
       stack->GetXaxis()->SetNdivisions(505);
       stack->GetYaxis()->SetTitle("Events");
@@ -236,7 +260,7 @@ template <typename ntupleType> class plot{
     }
     
     for(int iSample = 0 ; iSample < signalNtuples.size() ; iSample++){
-        TH1F* temp = signalHistoMap[signalNtuples[iSample]];
+        TH1D* temp = signalHistoMap[signalNtuples[iSample]];
         if( temp ){
             //temp->Scale(sum->Integral()/temp->Integral());
             temp->Draw("histo,SAME");
@@ -244,6 +268,7 @@ template <typename ntupleType> class plot{
                 max = temp->GetMaximum();
         }
     }
+
     if( dataHist ){
         dataHist->Draw("e1,SAME");
         if( dataHist->GetMaximum() > max ) 
@@ -276,15 +301,13 @@ template <typename ntupleType> class plot{
     can->GetFrame()->Draw();
     
     botPad->cd();
-    TH1F* ratio = new TH1F(*dataHist);
+    TH1D* ratio = new TH1D(*dataHist);
     ratio->SetNameTitle(sum->GetName()+TString("ratio"),sum->GetTitle());
     ratio->Divide(sum);
     //TGraphAsymmErrors* ratio = new TGraphAsymmErrors(sum,dataHist,"pois");
     ratio->SetMarkerStyle(8);
-    ratio->SetMarkerSize(0.5);
-    
     ratio->GetYaxis()->SetTitle("Data/MC");
-    ratio->GetYaxis()->SetRangeUser(0.0,2.0);
+    ratio->GetYaxis()->SetRangeUser(0.2,2.0);
     ratio->GetXaxis()->SetRangeUser(lower,upper);
     ratio->GetXaxis()->SetTitle(xlabel);
 
@@ -339,20 +362,32 @@ template <typename ntupleType> class plot{
     topPad->cd();
     gPad->SetLogy(false);
     can->SaveAs(dir+"/"+label+".png");
+    can->SaveAs(dir+"/"+label+".eps");
+    can->SaveAs(dir+"/"+label+".pdf");
     gPad->SetLogy(true);
     can->SaveAs(dir+"/"+label+"_LogY.png");
+    can->SaveAs(dir+"/"+label+"_LogY.eps");
+    can->SaveAs(dir+"/"+label+"_LogY.pdf");
   }
 
+  void Print(){
+    for( typename map<ntupleType*,TH1D*>::iterator it = histoMap.begin() ; it != histoMap.end() ; it++ ){
+      cout << " -- " << it->second->GetName() << " -- " << endl;
+      cout << "ntuple: " << it->first << " histo: " << it->second << endl;
+      it->second->Print("all");
+    }
+  }
+  
   TString label;
   TString xlabel;
   int nbins;
   double lower,upper;
-  double* binEdges;
-  map<ntupleType*,TH1F*> histoMap;
+  vector<double> binEdges;
+  map<ntupleType*,TH1D*> histoMap;
   map<ntupleType*,TString> tagMap;
-  map<ntupleType*,TH1F*> signalHistoMap;
-  TH1F* dataHist;
+  map<ntupleType*,TH1D*> signalHistoMap;
+  TH1D* dataHist{NULL};
   double (*fillerFunc)(ntupleType*);
-  THStack* stack;
-  TH1F* sum; 
+  THStack* stack{NULL};
+  TH1D* sum{NULL}; 
 };

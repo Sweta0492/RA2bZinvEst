@@ -34,7 +34,7 @@ if region == "signal" :
     RzgHistoFileName = "RzGamma_DR0p05_PUweightOnly_signal_histo_2017.root"
     RzgHistoTag = "AnalysisBins_BTag0_RzGamma_signal"
    
-    fragmentationFileName = "fragmentation_28_jan.txt"
+    fragmentationFileName = "../data/fragmentation_28_jan.txt"
  
     purityFileName = "../data/purity_2017.txt"
  
@@ -70,9 +70,9 @@ yieldInputFile = TFile(MChistoFileName,"READ")
 GJetsEBHisto = yieldInputFile.Get(MChistoTag+"_EB_GJets")
 GJetsEEHisto = yieldInputFile.Get(MChistoTag+"_EE_GJets")
 GJetsHisto = yieldInputFile.Get(MChistoTag+"_GJets")
-dataHisto = yieldInputFile.Get(MChistoTag+"_data")
-dataEBHisto = yieldInputFile.Get(MChistoTag+"_EB_data")
-dataEEHisto = yieldInputFile.Get(MChistoTag+"_EE_data")
+dataHisto = yieldInputFile.Get(MChistoTag+"_Data")
+dataEBHisto = yieldInputFile.Get(MChistoTag+"_EB_Data")
+dataEEHisto = yieldInputFile.Get(MChistoTag+"_EE_Data")
 
 
 if GJetsEBHisto.GetNbinsX() != GJetsEEHisto.GetNbinsX() : 
@@ -93,16 +93,17 @@ if dataEEHisto.GetNbinsX() != GJetsEEHisto.GetNbinsX() :
 
 print "================ RzGamma =============="
 ratioInputFile = TFile(RzgHistoFileName)
-ZJetsHisto_Rzg = TH1F(ratioInputFile.Get(RzgHistoTag+"_ZJets"))
+ZJetsHisto_Rzg = TH1D(ratioInputFile.Get(RzgHistoTag+"_ZJets"))
 ZJetsHisto_Rzg.SetNameTitle("ZJetsHisto_Rzg","ZJetsHisto_Rzg")
-GJetsHisto_Rzg = TH1F(ratioInputFile.Get(RzgHistoTag+"_GJets"))
+GJetsHisto_Rzg = TH1D(ratioInputFile.Get(RzgHistoTag+"_GJets"))
 GJetsHisto_Rzg.SetNameTitle("GJetsHisto_Rzg","GJetsHisto_Rzg")
-RzGamma = TH1F(ZJetsHisto_Rzg)
+RzGamma = TH1D(ZJetsHisto_Rzg)
 print "ZJets:",RzGamma.GetBinContent(1)
 RzGamma.SetNameTitle("RzGamma","RzGamma")
 RzGamma.Divide(GJetsHisto_Rzg)
 print "GJets:",GJetsHisto_Rzg.GetBinContent(1)
 print "GJets/ZJets:",RzGamma.GetBinContent(1)
+RzGamma.Scale(1./1.16)
 print "RzG:",RzGamma.GetBinContent(1)
 
 if RzGamma.GetNbinsX() != GJetsEEHisto.GetNbinsX() :

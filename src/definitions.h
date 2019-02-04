@@ -3,6 +3,7 @@
 #include "TH1F.h"
 #include "TFile.h"
 #include "TF1.h"
+
 // ==============================================
 // class for loading and retrieving GJets NLO
 // weights
@@ -80,9 +81,8 @@ template<typename ntupleType>void ntupleBranchStatus(ntupleType* ntuple){
   ntuple->fChain->SetBranchStatus("NonPrefiringProb",1);
   ntuple->fChain->SetBranchStatus("NonPrefiringProbUp",1);
   ntuple->fChain->SetBranchStatus("NonPrefiringProbDn",1);
-
+  ntuple->fChain->SetBranchStatus("HTRatioDPhiFilter",1);
 }
-
 /******************************************************************/
 /* - - - - - - - - - - - - cut flow function - - - - - - - - - -  */
 /******************************************************************/
@@ -151,13 +151,12 @@ template<typename ntupleType> bool cutFlow_btagsZero(ntupleType* ntuple){
     return ntuple->BTagsDeepCSV==0;
 }
 template<typename ntupleType> bool cutFlow_filters(ntupleType* ntuple){
-    return ( ntuple->HT5/ntuple->HT < 2.
+    return ( ntuple->HTRatioDPhiFilter == 1
 	     && ntuple->PFCaloMETRatio < 5. 
 	     && ntuple->globalSuperTightHalo2016Filter==1
 	     && ntuple->HBHENoiseFilter==1
 	     && ntuple->HBHEIsoNoiseFilter==1
 	     && ntuple->eeBadScFilter==1
-	     && ntuple->ecalBadCalibFilter==1 
 	     && ntuple->EcalDeadCellTriggerPrimitiveFilter == 1
 	     && ntuple->BadChargedCandidateFilter == 1
 	     && ntuple->BadPFMuonFilter == 1
@@ -178,8 +177,6 @@ template<typename ntupleType> double customPUweights(ntupleType* ntuple){
 template<typename ntupleType> double dRweights(ntupleType* ntuple){
     return 1. /( (min(ntuple->MHT, 900.0) - 399.6)*( -0.00040321 *2/3) + 0.8389); 
 }
-
-
 
 template<typename ntupleType> double GJets0p4Weights(ntupleType* ntuple){
     if( ntuple->madHT > 100. && ntuple->madHT < 200. )
@@ -311,20 +308,17 @@ template<typename ntupleType> int isPromptPhoton(ntupleType* ntuple){
   return ntuple->Photons_nonPrompt->at(0)==0;
 }
 
-
 template<typename ntupleType> double photonPt(ntupleType* ntuple){
   return ntuple->Photons->at(0).Pt();
-}
-
-template<typename ntupleType> double photonPhi(ntupleType* ntuple){
-  return ntuple->Photons->at(0).Phi();
 }
 
 template<typename ntupleType> double photonEta(ntupleType* ntuple){
   return ntuple->Photons->at(0).Eta();
 }
 
-
+template<typename ntupleType> double photonPhi(ntupleType* ntuple){
+  return ntuple->Photons->at(0).Phi();
+}
 
 
 
@@ -354,8 +348,6 @@ template<typename ntupleType> double jetSubleadPhi(ntupleType* ntuple){
 template<typename ntupleType> double jetSubleadEta(ntupleType* ntuple){
   return ntuple->Jets->at(1).Eta();
 }
-
-
 
 template<typename ntupleType> double photonSieie(ntupleType* ntuple){
   return ntuple->Photons_sigmaIetaIeta->at(0);
@@ -566,8 +558,7 @@ template<typename ntupleType> double fillAnalysisBins(ntupleType* ntuple){
     return -1.;
 }
 
-
-  template<typename ntupleType> double fillRA2b10Bins(ntupleType* ntuple){
+template<typename ntupleType> double fillRA2b10Bins(ntupleType* ntuple){
   double MHT = ntuple->MHT;
   double HT = ntuple->HT;
   double HT5 = ntuple->HT5;
@@ -642,8 +633,8 @@ if( HT >= MHT && DeltaPhi1 >= ( (1.025*(HT5/HT)) - 0.5875) ){
 }
 else
    return -999999.;
-
 }
+
 
 template<typename ntupleType> double fillRA2b13Bins(ntupleType* ntuple){
   double MHT = ntuple->MHT;
@@ -731,26 +722,6 @@ template<typename ntupleType> double fillRA2b13Bins(ntupleType* ntuple){
     return -999999.;
 }
 
-template<typename ntupleType> double fillRA2b59Bins( ntupleType* ntuple ){
-
-  int BTags = int(ntuple->BTagsDeepCSV);
-  if( BTags != 0 ) return -999999.;
-  int NJets = int(ntuple->NJets);
-
-  if( NJets == 2 ){
-      return fillRA2b13Bins(ntuple);
-  }else if( NJets >= 3 && NJets <=4 ){
-    return 13.+fillRA2b13Bins(ntuple);
-  }else if( NJets >= 5 && NJets <= 6 ){
-    return 26.+fillRA2b13Bins(ntuple);
-  }else if( NJets >= 7 && NJets <= 8 ){
-    return 39.+fillRA2b13Bins(ntuple);
-  }else if( NJets >= 9 ){
-    return 49.+fillRA2b13Bins(ntuple);
-  }else
-    return -999999.;
-}
-
 template<typename ntupleType> double fillRA2b46Bins( ntupleType* ntuple ){
 
   int BTags = int(ntuple->BTags);
@@ -767,6 +738,26 @@ template<typename ntupleType> double fillRA2b46Bins( ntupleType* ntuple ){
     return 30.+fillRA2b10Bins(ntuple);
   }else if( NJets >= 10 ){
     return 38.+fillRA2b10Bins(ntuple);
+  }else
+    return -999999.;
+}
+
+template<typename ntupleType> double fillRA2b59Bins( ntupleType* ntuple ){
+
+  int BTags = int(ntuple->BTagsDeepCSV);
+  if( BTags != 0 ) return -999999.;
+  int NJets = int(ntuple->NJets);
+
+  if( NJets == 2 ){
+      return fillRA2b13Bins(ntuple);
+  }else if( NJets >= 3 && NJets <=4 ){
+    return 13.+fillRA2b13Bins(ntuple);
+  }else if( NJets >= 5 && NJets <= 6 ){
+    return 26.+fillRA2b13Bins(ntuple);
+  }else if( NJets >= 7 && NJets <= 8 ){
+    return 39.+fillRA2b13Bins(ntuple);
+  }else if( NJets >= 9 ){
+    return 49.+fillRA2b13Bins(ntuple);
   }else
     return -999999.;
 }
@@ -974,17 +965,13 @@ template<typename ntupleType> bool RA2bLDPBaselineCut(ntupleType* ntuple){
 
 }
 
-
-
-
 TFile *f1 = new TFile("../data/L1PrefiringMaps_new.root");
 TH2F* h_photon = (TH2F*)f1->Get("L1prefiring_photonptvseta_2017BtoF");
 TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
 
- /* .......................Prefiring Weight ..............................................*/
- /*****************************************************************************************/
-
-   double prefiring_weight_photon(RA2bTree* ntuple,int iEvt ){
+/* .......................Prefiring Weight ..............................................*/
+/*****************************************************************************************/
+ double prefiring_weight_photon(RA2bTree* ntuple,int iEvt ){
           ntuple->GetEntry(iEvt);
           return ( 1 - h_photon->GetBinContent(h_photon->GetXaxis()->FindBin(ntuple->Photons->at(0).Eta()),h_photon->GetYaxis()->FindBin(ntuple->Photons->at(0).Pt())));
    }
@@ -993,14 +980,14 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
    double prefiring_weight_jet(RA2bTree* ntuple,int iEvt,int unsigned s ){
           ntuple->GetEntry(iEvt);
           return ( 1 - h_jet->GetBinContent(h_jet->GetXaxis()->FindBin(ntuple->Jets->at(s).Eta()),h_jet->GetYaxis()->FindBin(ntuple->Jets->at(s).Pt()))) ;
-   }
+ }
 
-  /*****************.>>>>>>>>>>>>>>>>>>>>   Photon Trigger Efficiency <<<<<<<<<<<<<<<***********/
-  /*****................................................................................********/
- 
+
+ /*****************.>>>>>>>>>>>>>>>>>>>>   Photon Trigger Efficiency <<<<<<<<<<<<<<<***********/
+ /*****................................................................................********/
   TFile *ftrigger = new TFile("../data/trigger_efficiency_PhotonPt_2017.root","READ");
   std::vector<TF1*> fTrigEff_;
-  void Trigger_weights()
+  void trig_eff_func()
 	{
           fTrigEff_.clear();
 	  fTrigEff_.push_back((TF1*)ftrigger->Get("f_trig_eb"));
@@ -1008,13 +995,9 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
 
 	}
   
-  double Trigger_weights_apply(RA2bTree* ntuple, int iEvt){
-  ntuple->GetEntry(iEvt);
- // fTrigEff_.clear();
- // fTrigEff_.push_back((TF1*)ftrigger->Get("f_trig_eb"));
- // fTrigEff_.push_back((TF1*)ftrigger->Get("f_trig_ec"));
-  
-  if( ntuple->Photons_isEB->at(0) && fTrigEff_.at(0) != nullptr ) 
+ double trig_eff(RA2bTree* ntuple, int iEvt){
+ ntuple->GetEntry(iEvt);
+ if( ntuple->Photons_isEB->at(0) && fTrigEff_.at(0) != nullptr ) 
        return  fTrigEff_.at(0)->Eval(max(double(205),ntuple->Photons->at(0).Pt()));  
      
   else if (!ntuple->Photons_isEB->at(0) && fTrigEff_.at(1) != nullptr ) 
@@ -1022,19 +1005,4 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
   else
        return 1;
    
-  }
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ }
