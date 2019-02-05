@@ -31,7 +31,7 @@ if region == "signal" :
     MChistoFileName = "plotObs_photon_baseline_2017.root"
     MChistoTag = "AnalysisBins_BTag0_photon_baseline"
 
-    RzgHistoFileName = "RzGamma_DR0p05_PUweightOnly_signal_histo_2017.root"
+    RzgHistoFileName = "RzGamma_PUweightOnly_signal_histo_2017.root"
     RzgHistoTag = "AnalysisBins_BTag0_RzGamma_signal"
    
     fragmentationFileName = "../data/fragmentation_28_jan.txt"
@@ -103,7 +103,7 @@ RzGamma.SetNameTitle("RzGamma","RzGamma")
 RzGamma.Divide(GJetsHisto_Rzg)
 print "GJets:",GJetsHisto_Rzg.GetBinContent(1)
 print "GJets/ZJets:",RzGamma.GetBinContent(1)
-RzGamma.Scale(1./1.16)
+RzGamma.Scale(1./1.23)
 print "RzG:",RzGamma.GetBinContent(1)
 
 if RzGamma.GetNbinsX() != GJetsEEHisto.GetNbinsX() :
@@ -233,11 +233,11 @@ for i in range(nBins) :
 
     if ( i >= 30 and i < 38 ) :
         outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-10))
-        outputDict["REr1"].append(RzGamma.GetBinError(i+1-10)/outputDict["ZgR"][i+1-10])
+        outputDict["REr1"].append(RzGamma.GetBinError(i+1-10)/outputDict["ZgR"][i-10])
         outputDict["trigWerr"].append(((dataEBHisto.GetBinContent(i+1-10)*0.00475132) + (dataEEHisto.GetBinContent(i+1-10)*0.00941128))/(dataEBHisto.GetBinContent(i+1-10)+dataEEHisto.GetBinContent(i+1-10) )) 
     elif ( i >= 38 and i < 46 ) :
         outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-18))
-        outputDict["REr1"].append(RzGamma.GetBinError(i+1-18)/outputDict["ZgR"][i+1-18])
+        outputDict["REr1"].append(RzGamma.GetBinError(i+1-18)/outputDict["ZgR"][i-18])
         outputDict["trigWerr"].append(((dataEBHisto.GetBinContent(i+1-18)*0.00475132) + (dataEEHisto.GetBinContent(i+1-18)*0.00941128))/(dataEBHisto.GetBinContent(i+1-18)+dataEEHisto.GetBinContent(i+1-18) ))
     else:
         outputDict["ZgR"].append(RzGamma.GetBinContent(i+1))
