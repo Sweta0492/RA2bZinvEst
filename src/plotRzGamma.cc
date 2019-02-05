@@ -115,10 +115,10 @@ int main(int argc, char** argv){
 
     vector<TString> GJetsFileNames;
     if( DR0p4 ){ 
-        GJetsFileNames.push_back("tree_GJets_HT-100to200_MC2017.root");
-        GJetsFileNames.push_back("tree_GJets_HT-200to400_MC2017.root");
-        GJetsFileNames.push_back("tree_GJets_HT-400to600_MC2017.root");
-        GJetsFileNames.push_back("tree_GJets_HT-600toInf_MC2017.root");
+        GJetsFileNames.push_back("tree_GJets_DR-0p4_HT-100to200_MC2017.root");
+        GJetsFileNames.push_back("tree_GJets_DR-0p4_HT-200to400_MC2017.root");
+        GJetsFileNames.push_back("tree_GJets_DR-0p4_HT-400to600_MC2017.root");
+        GJetsFileNames.push_back("tree_GJets_DR-0p4_HT-600toInf_MC2017.root");
     }else{
         GJetsFileNames.push_back("tree_GJets_HT-100to200_MC2017.root");
         GJetsFileNames.push_back("tree_GJets_HT-200to400_MC2017.root");
@@ -172,9 +172,9 @@ int main(int argc, char** argv){
 
     TFile* outputFile;
     if( DR0p4 ) 
-        outputFile = new TFile("RzGamma_PUweightOnly_"+regionNames[region]+"_histo_2018.root","RECREATE");
+        outputFile = new TFile("RzGamma_PUweightOnly_"+regionNames[region]+"_histo.root","RECREATE");
     else 
-        outputFile = new TFile("RzGamma_DR0p05_PUweightOnly_"+regionNames[region]+"_histo_2018.root","RECREATE");
+        outputFile = new TFile("RzGamma_DR0p05_PUweightOnly_"+regionNames[region]+"_histo.root","RECREATE");
 
     TCanvas* can = new TCanvas("can","can",500,500);
 
@@ -197,9 +197,9 @@ int main(int argc, char** argv){
         can->GetFrame()->Draw();
     
         if( DR0p4 )
-            can->SaveAs("../plots_2018/RzGamma_plots/"+TString(plots[iPlot].histoMap[samples[0]]->GetName())+".png");
+            can->SaveAs("../plots/RzGamma_plots/"+TString(plots[iPlot].histoMap[samples[0]]->GetName())+".png");
         else
-            can->SaveAs("../plots_2018/RzGamma_DR0p05_plots/"+TString(plots[iPlot].histoMap[samples[0]]->GetName())+".png");
+            can->SaveAs("../plots/RzGamma_DR0p05_plots/"+TString(plots[iPlot].histoMap[samples[0]]->GetName())+".png");
         
    }
 

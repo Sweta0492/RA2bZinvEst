@@ -18,10 +18,10 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
               "QCD_300to500",
               "QCD_500to700",
               "QCD_700to1000"],
-             ["GJets_100to200",
-              "GJets_200to400",
-              "GJets_400to600",
-              "GJets_600toInf"],
+             ["GJets0p4_100to200",
+              "GJets0p4_200to400",
+              "GJets0p4_400to600",
+              "GJets0p4_600toInf"],
              ["TT_600to800",
               "TT_800to1200",
               "TT_1200to2500",
@@ -138,7 +138,7 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
     SIMtext.SetTextSize(0.08)
     SIMtext.Draw()
     
-    LUMItext = r.TText(.65,.95,"13 TeV (41.X/fb)")
+    LUMItext = r.TText(.65,.95,"13 TeV (59X/fb)")
     LUMItext.SetNDC()
     LUMItext.SetTextFont(51)
     LUMItext.SetTextSize(0.08)
