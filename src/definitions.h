@@ -724,7 +724,7 @@ template<typename ntupleType> double fillRA2b13Bins(ntupleType* ntuple){
 
 template<typename ntupleType> double fillRA2b46Bins( ntupleType* ntuple ){
 
-  int BTags = int(ntuple->BTags);
+  int BTags = int(ntuple->BTagsDeepCSV);
   if( BTags != 0 ) return -999999.;
   int NJets = int(ntuple->NJets);
 
