@@ -6,7 +6,6 @@
 #include <vector>
 #include <map>
 
-//static const TString BASE_DIR_DATA = "/home/whitbeck/raid/CMS_DATA/SusyRA2Analysis2015/Skims/Run2ProductionV16/";
 static const TString BASE_DIR = "root://cmseos.fnal.gov//store/user/lpcsusyhad/SusyRA2Analysis2015/Skims/Run2ProductionV16/";
 static const bool RE_MINIAOD = false;
 
@@ -117,39 +116,23 @@ public :
         fileNames["Other_ST_tW_antitop"] = "tree_ST_tW_antitop_MC2017.root";
         fileNames["Other_ST_tW_top"] = "tree_ST_tW_top_MC2017.root";
 
-        fileNames["HTMHT_2016B"] = "tree_HTMHT_2016B.root";
-        fileNames["HTMHT_2016C"] = "tree_HTMHT_2016C.root";
-        fileNames["HTMHT_2016D"] = "tree_HTMHT_2016D.root";
-        fileNames["HTMHT_2016E"] = "tree_HTMHT_2016E.root";
-        fileNames["HTMHT_2016F"] = "tree_HTMHT_2016F.root";
-        fileNames["HTMHT_2016G"] = "tree_HTMHT_2016G.root";
-        fileNames["HTMHT_2016H2"] = "tree_HTMHT_2016H2.root";
-        fileNames["HTMHT_2016H3"] = "tree_HTMHT_2016H3.root";
+        fileNames["HTMHT_2017B"] = "tree_HTMHT_2017B.root";
+        fileNames["HTMHT_2017C"] = "tree_HTMHT_2017C.root";
+        fileNames["HTMHT_2017D"] = "tree_HTMHT_2017D.root";
+        fileNames["HTMHT_2017E"] = "tree_HTMHT_2017E.root";
+        fileNames["HTMHT_2017F"] = "tree_HTMHT_2017F.root";
 
-        fileNames["SingleElectron_2016C"] = "tree_SingleElectron_2016C.root";
-        fileNames["SingleElectron_2016D"] = "tree_SingleElectron_2016D.root";
-        fileNames["SingleElectron_2016E"] = "tree_SingleElectron_2016E.root";
-        fileNames["SingleElectron_2016F"] = "tree_SingleElectron_2016F.root";
-        fileNames["SingleElectron_2016G"] = "tree_SingleElectron_2016G.root";
-        fileNames["SingleElectron_2016H"] = "tree_SingleElectron_2016H.root";
+        fileNames["SingleElectron_2017B"] = "tree_SingleElectron_2017B.root";
+        fileNames["SingleElectron_2017C"] = "tree_SingleElectron_2017C.root";
+        fileNames["SingleElectron_2017D"] = "tree_SingleElectron_2017D.root";
+        fileNames["SingleElectron_2017E"] = "tree_SingleElectron_2017E.root";
+        fileNames["SingleElectron_2017F"] = "tree_SingleElectron_2017F.root";
 
-        fileNames["SingleMuon_2016B"] = "tree_SingleMuon_2016B.root";
-        fileNames["SingleMuon_2016C"] = "tree_SingleMuon_2016C.root";
-        fileNames["SingleMuon_2016D"] = "tree_SingleMuon_2016D.root";
-        fileNames["SingleMuon_2016E"] = "tree_SingleMuon_2016E.root";
-        fileNames["SingleMuon_2016F"] = "tree_SingleMuon_2016F.root";
-        fileNames["SingleMuon_2016G"] = "tree_SingleMuon_2016G.root";
-        fileNames["SingleMuon_2016H2"] = "tree_SingleMuon_2016H2.root";
-        fileNames["SingleMuon_2016H3"] = "tree_SingleMuon_2016H3.root";
-
- 	fileNames["SinglePhoton_2016B"] = "tree_SinglePhoton_2016B.root";
- 	fileNames["SinglePhoton_2016C"] = "tree_SinglePhoton_2016C.root";
- 	fileNames["SinglePhoton_2016D"] = "tree_SinglePhoton_2016D.root";
- 	fileNames["SinglePhoton_2016E"] = "tree_SinglePhoton_2016E.root";
- 	fileNames["SinglePhoton_2016F"] = "tree_SinglePhoton_2016F.root";
- 	fileNames["SinglePhoton_2016G"] = "tree_SinglePhoton_2016G.root";
- 	fileNames["SinglePhoton_2016H2"] = "tree_SinglePhoton_2016H2.root";
- 	fileNames["SinglePhoton_2016H3"] = "tree_SinglePhoton_2016H3.root";
+        fileNames["SingleMuon_2017B"] = "tree_SingleMuon_2017B.root";
+        fileNames["SingleMuon_2017C"] = "tree_SingleMuon_2017C.root";
+        fileNames["SingleMuon_2017D"] = "tree_SingleMuon_2017D.root";
+        fileNames["SingleMuon_2017E"] = "tree_SingleMuon_2017E.root";
+        fileNames["SingleMuon_2017F"] = "tree_SingleMuon_2017F.root";
 
  	fileNames["SinglePhoton_2017B"] = "tree_SinglePhoton_2017B.root";
  	fileNames["SinglePhoton_2017C"] = "tree_SinglePhoton_2017C.root";
