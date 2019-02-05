@@ -28,10 +28,10 @@ outputFileName=""
 if region == "signal" :
     nBins = 46
     
-    MChistoFileName = "plotObs_photon_baseline_2018.root"
+    MChistoFileName = "baselineInputs.root"
     MChistoTag = "AnalysisBins_BTag0_photon_baseline"
 
-    RzgHistoFileName = "RzGamma_PUweightOnly_signal_histo_2018.root"
+    RzgHistoFileName = "RzGamma_PUweightOnly_signal_histo.root"
     RzgHistoTag = "AnalysisBins_BTag0_RzGamma_signal"
    
     fragmentationFileName = "../data/fragmentation_28_jan.txt"
@@ -103,7 +103,7 @@ RzGamma.SetNameTitle("RzGamma","RzGamma")
 RzGamma.Divide(GJetsHisto_Rzg)
 print "GJets:",GJetsHisto_Rzg.GetBinContent(1)
 print "GJets/ZJets:",RzGamma.GetBinContent(1)
-RzGamma.Scale(1./1.16)
+RzGamma.Scale(1./1.23)
 print "RzG:",RzGamma.GetBinContent(1)
 
 if RzGamma.GetNbinsX() != GJetsEEHisto.GetNbinsX() :
@@ -232,11 +232,11 @@ for i in range(nBins) :
     
     if ( i >= 30 and i < 38 ) :
         outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-10))
-        outputDict["REr1"].append(RzGamma.GetBinError(i+1-10)/outputDict["ZgR"][i+1-10])
+        outputDict["REr1"].append(RzGamma.GetBinError(i+1-10)/outputDict["ZgR"][i-10])
         outputDict["trigWerr"].append(((dataEBHisto.GetBinContent(i+1-10)*0.00880785) + (dataEEHisto.GetBinContent(i+1-10)*0.0179556))/(dataEBHisto.GetBinContent(i+1-10)+dataEEHisto.GetBinContent(i+1-10) )) 
     elif ( i >= 38 and i < 46 ) :
         outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-18))
-        outputDict["REr1"].append(RzGamma.GetBinError(i+1-18)/outputDict["ZgR"][i+1-18])
+        outputDict["REr1"].append(RzGamma.GetBinError(i+1-18)/outputDict["ZgR"][i-18])
         outputDict["trigWerr"].append(((dataEBHisto.GetBinContent(i+1-10)*0.00880785) + (dataEEHisto.GetBinContent(i+1-10)*0.0179556))/(dataEBHisto.GetBinContent(i+1-10)+dataEEHisto.GetBinContent(i+1-10) )) 
     else:
         outputDict["ZgR"].append(RzGamma.GetBinContent(i+1))
@@ -342,4 +342,4 @@ LUMItext.SetTextSize(0.045)
 #LUMItext.Draw()
 
 
-can.SaveAs("prediction_2016.png")
+can.SaveAs("prediction_2018.png")
