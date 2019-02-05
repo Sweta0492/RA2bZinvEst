@@ -37,10 +37,10 @@ class NLO_weights{
 
 // constants
 // ==============================================
-double bbtagCut = 0.4;
-TFile* puWeightFile = new TFile("../data/PileupHistograms_0121_69p2mb_pm4p6.root");
-TH1F* puWeightHist = (TH1F*) puWeightFile->Get("pu_weights_down");
-NLO_weights NLOw;
+//double bbtagCut = 0.4;
+//TFile* puWeightFile = new TFile("../data/PileupHistograms_0121_69p2mb_pm4p6.root");
+//TH1F* puWeightHist = (TH1F*) puWeightFile->Get("pu_weights_down");
+//NLO_weights NLOw;
 // ==============================================
 
 double CalcdPhi( double phi1 , double phi2 ){
@@ -168,10 +168,10 @@ template<typename ntupleType> bool cutFlow_filters(ntupleType* ntuple){
 /******************************************/
 /* custom weights			   */
 /******************************************/
-template<typename ntupleType> double customPUweights(ntupleType* ntuple){
-    int nVtx = ntuple->TrueNumInteractions;
-    return puWeightHist->GetBinContent(puWeightHist->GetXaxis()->FindBin(min(ntuple->TrueNumInteractions,puWeightHist->GetBinLowEdge(puWeightHist->GetNbinsX()+1))));
-}
+//template<typename ntupleType> double customPUweights(ntupleType* ntuple){
+//    int nVtx = ntuple->TrueNumInteractions;
+//    return puWeightHist->GetBinContent(puWeightHist->GetXaxis()->FindBin(min(ntuple->TrueNumInteractions,puWeightHist->GetBinLowEdge(puWeightHist->GetNbinsX()+1))));
+//}
 
 
 template<typename ntupleType> double dRweights(ntupleType* ntuple){
@@ -724,7 +724,7 @@ template<typename ntupleType> double fillRA2b13Bins(ntupleType* ntuple){
 
 template<typename ntupleType> double fillRA2b46Bins( ntupleType* ntuple ){
 
-  int BTags = int(ntuple->BTags);
+  int BTags = int(ntuple->BTagsDeepCSV);
   if( BTags != 0 ) return -999999.;
   int NJets = int(ntuple->NJets);
 
