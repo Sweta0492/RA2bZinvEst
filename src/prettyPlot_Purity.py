@@ -8,24 +8,21 @@ r.gROOT.ProcessLine("setTDRStyle()")
 plot_dir="plotPurityProperties_plots"
 
 input_file_name = "plotPurityProperties_photonLoose.root"
-#input_file_name = "plotObs_photon_baseline.root"
-#input_file_name = "plotObs_photonLoose_baseline.root"
 input_file = r.TFile(input_file_name,"READ")    
 
 def plot(plot_var = "photonIsoChrgLowSieie_EB_photonLoose" ):
     
-    samples=[["QCD_1000to1500",
-              "QCD_1500to2000",
-              "QCD_2000toInf",
-              "QCD_200to300",
+    samples=[["QCD_200to300",
               "QCD_300to500",
               "QCD_500to700",
-              "QCD_700to1000"],
-             ["GJets_100to200",
-              "GJets_100to200",
-              "GJets_200to400",
-              "GJets_400to600",
-              "GJets_600toInf"]]
+              "QCD_700to1000",
+              "QCD_1000to1500",
+              "QCD_1500to2000",
+              "QCD_2000toInf"],
+             ["GJets0p4_100to200",
+              "GJets0p4_200to400",
+              "GJets0p4_400to600",
+              "GJets0p4_600toInf"]]
     
     data_samples=["SinglePhoton_2018A",
                   "SinglePhoton_2018B",
@@ -122,7 +119,7 @@ def plot(plot_var = "photonIsoChrgLowSieie_EB_photonLoose" ):
     SIMtext.SetTextSize(0.08)
     SIMtext.Draw()
     
-    LUMItext = r.TText(.65,.95,"13 TeV (41.X/fb)")
+    LUMItext = r.TText(.65,.95,"13 TeV (59.X/fb)")
     LUMItext.SetNDC()
     LUMItext.SetTextFont(51)
     LUMItext.SetTextSize(0.08)
@@ -160,7 +157,6 @@ def plot(plot_var = "photonIsoChrgLowSieie_EB_photonLoose" ):
         r.TH1D(h).Write()
     data_histo[0].Write()
 
-#output_file = r.TFile("baselineInputs.root","RECREATE")
 output_file = r.TFile("purityInputs.root","RECREATE")
 
 vars = []
