@@ -8,10 +8,10 @@ backgroundSamples=["QCD_200to300",
                    "QCD_1000to1500",
                    "QCD_1500to2000",
                    "QCD_2000toInf",
-                   "GJets_100to200",
-                   "GJets_200to400",
-                   "GJets_400to600",
-                   "GJets_600toInf"
+                   "GJets0p4_100to200",
+                   "GJets0p4_200to400",
+                   "GJets0p4_400to600",
+                   "GJets0p4_600toInf"
                     ]
 
 dataSamples=["SinglePhoton_2017B",
