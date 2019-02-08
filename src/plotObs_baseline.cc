@@ -238,10 +238,11 @@ void process(int region, string backgroundSample, string dataSample){
 	  if( skims.sampleName[iSample] == "QCD" && isPromptPhoton(ntuple) ) continue;
 	  if( skims.sampleName[iSample] == "GJets" && ( !isPromptPhoton(ntuple) || ntuple->madMinPhotonDeltaR < 0.4 ) ) continue;
 	}
-        if(!passHEMjetVeto(ntuple, iEvt,30)) continue;                       // HEM veto
+        
+        if(!passHEMjetVeto(ntuple,30)) continue;                       // HEM veto
      
 	// ----------- weights -----------------
-	weight = lumi*ntuple->Weight*trig_eff(ntuple,iEvt);
+	weight = lumi*ntuple->Weight*trig_eff(ntuple);
         // if( skims.sampleName[iSample] == "GJets" ) weight *= dRweights(ntuple);
         
 	// -------------------------------------
@@ -284,9 +285,15 @@ void process(int region, string backgroundSample, string dataSample){
         if( iEvt % 1000000 == 0 ) cout << "data: " << iEvt << "/" << numEvents << endl;
         if( ( reg == skimSamples::kPhotonLDP ) && !RA2bLDPBaselinePhotonCut(ntuple) ) continue;   
         if( ( reg == skimSamples::kPhoton || reg == skimSamples::kPhotonLoose ) && !RA2bBaselinePhotonCut(ntuple) ) continue;
-        
-        if(!passHEMjetVeto(ntuple, iEvt,30)) continue; 
-         /*......................Trigger Weight ...............................*/
+ 
+        //HEM VETO
+
+        if(ntuple->RunNum < 319077) continue; 
+        if(!passHEMjetVeto(ntuple,30)) continue; 
+ 
+
+
+        /*......................Trigger Weight ...............................*/
 	bool pass_trigger=false;
 	for( unsigned int itrig = 0 ; itrig < trigger_indices.size() ; itrig++ )
 	  pass_trigger|=(ntuple->TriggerPass->at(trigger_indices[itrig])==1);

@@ -996,8 +996,7 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
 
 	}
   
- double trig_eff(RA2bTree* ntuple, int iEvt){
- ntuple->GetEntry(iEvt);
+ double trig_eff(RA2bTree* ntuple){
  if( ntuple->Photons_isEB->at(0) && fTrigEff_.at(0) != nullptr ) 
        return  fTrigEff_.at(0)->Eval(max(double(205),ntuple->Photons->at(0).Pt()));  
      
@@ -1018,7 +1017,6 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
 
  bool passHEMobjVeto(TLorentzVector& obj, double ptThresh = 0) {
     if (!isMC_ && Run_number < StartHEM) return true;
-   // if (isMC_ && runBlock_.find("HEM") == std::string::npos) return true;
     if (-3.0 <= obj.Eta() && obj.Eta() <= -1.4 && 
 	-1.57 <= obj.Phi() && obj.Phi() <= -0.87 &&
 	obj.Pt() > ptThresh)
@@ -1026,10 +1024,8 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
     else return true;
   };
  
- bool passHEMjetVeto(RA2bTree* ntuple, int iEvt,double ptThresh = 30) {
-    ntuple->GetEntry(iEvt);
+ bool passHEMjetVeto(RA2bTree* ntuple,double ptThresh = 30) {
     if (!isMC_ && ntuple->RunNum < StartHEM) return true;
-   // if (isMC_ && runBlock_.find("HEM") == std::string::npos) return true;
     Run_number=ntuple->RunNum;    
     for (auto & jet : *ntuple->Jets)
       if (!passHEMobjVeto(jet, ptThresh)) return false;
