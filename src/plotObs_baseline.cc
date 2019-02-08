@@ -212,6 +212,7 @@ void process(int region, string backgroundSample, string dataSample){
     // background MC samples
     for( int iSample = 0 ; iSample < skims.ntuples.size() ; iSample++){
 
+      isMC_= true;
       TFile* outputFile = new TFile("plotObs_"+skims.regionNames[region]+"_baseline_"+skims.sampleName[iSample]+".root","UPDATE");
 
       RA2bTree* ntuple = skims.ntuples[iSample];
@@ -240,9 +241,12 @@ void process(int region, string backgroundSample, string dataSample){
 	  if( skims.sampleName[iSample] == "GJets" && ( !isPromptPhoton(ntuple) || ntuple->madMinPhotonDeltaR < 0.4 ) ) continue;
 	}
 
+        if(!passHEMjetVeto(ntuple, 30)) continue;                       // HEM veto
+
+ 
 	// ----------- weights -----------------
-	weight = lumi*ntuple->Weight*trig_eff(ntuple,iEvt);
-        // if( skims.sampleName[iSample] == "GJets" ) weight *= dRweights(ntuple);
+	weight = lumi*ntuple->Weight*trig_eff(ntuple);
+        if( skims.sampleName[iSample] == "GJets" ) weight *= dRweights(ntuple);
         
 	// -------------------------------------
 
@@ -284,7 +288,11 @@ void process(int region, string backgroundSample, string dataSample){
         if( iEvt % 1000000 == 0 ) cout << "data: " << iEvt << "/" << numEvents << endl;
         if( ( reg == skimSamples::kPhotonLDP ) && !RA2bLDPBaselinePhotonCut(ntuple) ) continue;   
         if( ( reg == skimSamples::kPhoton || reg == skimSamples::kPhotonLoose ) && !RA2bBaselinePhotonCut(ntuple) ) continue;
-        
+
+        // passing events only in non HEM RunNum
+
+        if(ntuple->RunNum >= 319077) continue;                                    
+ 
          /*......................Trigger Weight ...............................*/
 	bool pass_trigger=false;
 	for( unsigned int itrig = 0 ; itrig < trigger_indices.size() ; itrig++ )

@@ -82,6 +82,7 @@ template<typename ntupleType>void ntupleBranchStatus(ntupleType* ntuple){
   ntuple->fChain->SetBranchStatus("NonPrefiringProbUp",1);
   ntuple->fChain->SetBranchStatus("NonPrefiringProbDn",1);
   ntuple->fChain->SetBranchStatus("HTRatioDPhiFilter",1);
+  ntuple->fChain->SetBranchStatus("RunNum",1);
 }
 /******************************************************************/
 /* - - - - - - - - - - - - cut flow function - - - - - - - - - -  */
@@ -971,14 +972,12 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
 
 /* .......................Prefiring Weight ..............................................*/
 /*****************************************************************************************/
- double prefiring_weight_photon(RA2bTree* ntuple,int iEvt ){
-          ntuple->GetEntry(iEvt);
+ double prefiring_weight_photon(RA2bTree* ntuple){
           return ( 1 - h_photon->GetBinContent(h_photon->GetXaxis()->FindBin(ntuple->Photons->at(0).Eta()),h_photon->GetYaxis()->FindBin(ntuple->Photons->at(0).Pt())));
    }
 
 
-   double prefiring_weight_jet(RA2bTree* ntuple,int iEvt,int unsigned s ){
-          ntuple->GetEntry(iEvt);
+   double prefiring_weight_jet(RA2bTree* ntuple,int unsigned s ){
           return ( 1 - h_jet->GetBinContent(h_jet->GetXaxis()->FindBin(ntuple->Jets->at(s).Eta()),h_jet->GetYaxis()->FindBin(ntuple->Jets->at(s).Pt()))) ;
  }
 
@@ -995,8 +994,9 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
 
 	}
   
- double trig_eff(RA2bTree* ntuple, int iEvt){
- ntuple->GetEntry(iEvt);
+// double trig_eff(RA2bTree* ntuple, int iEvt){
+// ntuple->GetEntry(iEvt);
+ double trig_eff(RA2bTree* ntuple){ 
  if( ntuple->Photons_isEB->at(0) && fTrigEff_.at(0) != nullptr ) 
        return  fTrigEff_.at(0)->Eval(max(double(205),ntuple->Photons->at(0).Pt()));  
      
@@ -1006,3 +1006,32 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
        return 1;
    
  }
+
+ /***********************************HEM veto  **********************************************/
+//////***************************************************************************************/
+
+ int StartHEM = 319077;
+ bool isMC_, Run_number;
+
+ bool passHEMobjVeto(TLorentzVector& obj, double ptThresh = 0) {
+ if (!isMC_ && Run_number < StartHEM) return true;
+ if (-3.0 <= obj.Eta() && obj.Eta() <= -1.4 && 
+	-1.57 <= obj.Phi() && obj.Phi() <= -0.87 &&
+	obj.Pt() > ptThresh)
+      return false;
+    else return true;
+ };
+ 
+ bool passHEMjetVeto(RA2bTree* ntuple, double ptThresh = 30) {
+    if (!isMC_ && ntuple->RunNum < StartHEM) return true;
+    Run_number=ntuple->RunNum;    
+    for (auto & jet : *ntuple->Jets)
+      if (!passHEMobjVeto(jet, ptThresh)) return false;
+    return true;
+ };
+
+
+
+
+
+
