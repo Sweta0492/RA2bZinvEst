@@ -82,6 +82,7 @@ template<typename ntupleType>void ntupleBranchStatus(ntupleType* ntuple){
   ntuple->fChain->SetBranchStatus("NonPrefiringProbUp",1);
   ntuple->fChain->SetBranchStatus("NonPrefiringProbDn",1);
   ntuple->fChain->SetBranchStatus("HTRatioDPhiFilter",1);
+  ntuple->fChain->SetBranchStatus("RunNum",1);
 }
 /******************************************************************/
 /* - - - - - - - - - - - - cut flow function - - - - - - - - - -  */
@@ -1006,3 +1007,54 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
        return 1;
    
  }
+
+/************************************HEM veto ***************************************\\\\\\/
+ * ...................................................................................****/
+
+
+
+ int StartHEM = 319077;
+ bool isMC_, Run_number;
+
+ bool passHEMobjVeto(TLorentzVector& obj, double ptThresh = 0) {
+    if (!isMC_ && Run_number < StartHEM) return true;
+   // if (isMC_ && runBlock_.find("HEM") == std::string::npos) return true;
+    if (-3.0 <= obj.Eta() && obj.Eta() <= -1.4 && 
+	-1.57 <= obj.Phi() && obj.Phi() <= -0.87 &&
+	obj.Pt() > ptThresh)
+      return false;
+    else return true;
+  };
+ 
+ bool passHEMjetVeto(RA2bTree* ntuple, int iEvt,double ptThresh = 30) {
+    ntuple->GetEntry(iEvt);
+    if (!isMC_ && ntuple->RunNum < StartHEM) return true;
+   // if (isMC_ && runBlock_.find("HEM") == std::string::npos) return true;
+    Run_number=ntuple->RunNum;    
+    for (auto & jet : *ntuple->Jets)
+      if (!passHEMobjVeto(jet, ptThresh)) return false;
+    return true;
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
