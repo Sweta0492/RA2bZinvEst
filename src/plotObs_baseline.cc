@@ -23,7 +23,6 @@ void process(int region, string backgroundSample, string dataSample){
     vector<int> trigger_indices = {140,141};
 
     skimSamples::region reg = static_cast<skimSamples::region>(region);
-
     vector<TString> backgroundSamples;
     if( backgroundSample != "" )
       backgroundSamples.push_back(TString(backgroundSample));
@@ -211,7 +210,7 @@ void process(int region, string backgroundSample, string dataSample){
 
     // background MC samples
     for( int iSample = 0 ; iSample < skims.ntuples.size() ; iSample++){
-
+      isMC_ = true;
       TFile* outputFile = new TFile("plotObs_"+skims.regionNames[region]+"_baseline_"+skims.sampleName[iSample]+".root","UPDATE");
 
       RA2bTree* ntuple = skims.ntuples[iSample];
@@ -239,7 +238,8 @@ void process(int region, string backgroundSample, string dataSample){
 	  if( skims.sampleName[iSample] == "QCD" && isPromptPhoton(ntuple) ) continue;
 	  if( skims.sampleName[iSample] == "GJets" && ( !isPromptPhoton(ntuple) || ntuple->madMinPhotonDeltaR < 0.4 ) ) continue;
 	}
-
+        if(!passHEMjetVeto(ntuple, iEvt,30)) continue;                       // HEM veto
+     
 	// ----------- weights -----------------
 	weight = lumi*ntuple->Weight*trig_eff(ntuple,iEvt);
         // if( skims.sampleName[iSample] == "GJets" ) weight *= dRweights(ntuple);
@@ -268,7 +268,7 @@ void process(int region, string backgroundSample, string dataSample){
     
     // Data samples
     for( int iSample = 0 ; iSample < skims.dataNtuple.size() ; iSample++){
-      
+      isMC_ = false;
       TFile* outputFile = new TFile("plotObs_"+skims.regionNames[region]+"_baseline_"+skims.dataSampleName[iSample]+".root","UPDATE");
       RA2bTree* ntuple = skims.dataNtuple[iSample];
       for( int iPlot = 0 ; iPlot < plotsAllEvents.size() ; iPlot++){
@@ -285,6 +285,7 @@ void process(int region, string backgroundSample, string dataSample){
         if( ( reg == skimSamples::kPhotonLDP ) && !RA2bLDPBaselinePhotonCut(ntuple) ) continue;   
         if( ( reg == skimSamples::kPhoton || reg == skimSamples::kPhotonLoose ) && !RA2bBaselinePhotonCut(ntuple) ) continue;
         
+        if(!passHEMjetVeto(ntuple, iEvt,30)) continue; 
          /*......................Trigger Weight ...............................*/
 	bool pass_trigger=false;
 	for( unsigned int itrig = 0 ; itrig < trigger_indices.size() ; itrig++ )

@@ -133,6 +133,7 @@ int main(int argc, char** argv){
     sampleNames.push_back("GJets");
 
     trig_eff_func();                      // trigger Weight Efficiency here
+    isMC_= true;
 
     for( int iSample = 0 ; iSample < samples.size() ; iSample++){
         RA2bTree* ntuple = samples[iSample];
@@ -154,7 +155,7 @@ int main(int argc, char** argv){
             if( sampleNames[iSample] == "GJets" && !( ntuple->madMinPhotonDeltaR>0.4 ) ) continue;
             if( sampleNames[iSample] == "GJets" && ntuple->Photons->at(0).Pt() < 200. ) continue;      
             if( ( region == 0 && !RA2bBaselineCut(ntuple) ) || ( region == 1 && !RA2bLDPBaselineCut(ntuple) ) ) continue;
-         
+            if(!passHEMjetVeto(ntuple, iEvt,30)) continue;        
            // weight applied here      
            
             weight = lumi*ntuple->Weight; 
