@@ -996,7 +996,7 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
   
 // double trig_eff(RA2bTree* ntuple, int iEvt){
 // ntuple->GetEntry(iEvt);
- double trig_eff(RA2bTree* ntuple){ 
+ double trig_eff(RA2bTree* ntuple,int iEvt){ 
  if( ntuple->Photons_isEB->at(0) && fTrigEff_.at(0) != nullptr ) 
        return  fTrigEff_.at(0)->Eval(max(double(205),ntuple->Photons->at(0).Pt()));  
      
@@ -1012,23 +1012,18 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
 
  int StartHEM = 319077;
  bool isMC_, Run_number;
-
- bool passHEMobjVeto(TLorentzVector& obj, double ptThresh = 0) {
- if (!isMC_ && Run_number < StartHEM) return true;
- if (-3.0 <= obj.Eta() && obj.Eta() <= -1.4 && 
-	-1.57 <= obj.Phi() && obj.Phi() <= -0.87 &&
-	obj.Pt() > ptThresh)
-      return false;
-    else return true;
- };
- 
- bool passHEMjetVeto(RA2bTree* ntuple, double ptThresh = 30) {
+ bool passHEMjetVeto(RA2bTree* ntuple,int iEvt,double ptThresh = 30) {
+    ntuple->GetEntry(iEvt);
     if (!isMC_ && ntuple->RunNum < StartHEM) return true;
-    Run_number=ntuple->RunNum;    
-    for (auto & jet : *ntuple->Jets)
-      if (!passHEMobjVeto(jet, ptThresh)) return false;
+    for (int p = 0; p < ntuple->Jets->size(); p++){
+      if (-3.0 <= ntuple->Jets->at(p).Eta() && ntuple->Jets->at(p).Eta() <= -1.4 &&
+        -1.57 <= ntuple->Jets->at(p).Phi() && ntuple->Jets->at(p).Phi() <= -0.87 &&
+        ntuple->Jets->at(p).Pt() > ptThresh)
+        return false;
+    } 
     return true;
- };
+  };
+
 
 
 
