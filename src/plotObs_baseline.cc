@@ -212,7 +212,6 @@ void process(int region, string backgroundSample, string dataSample){
     // background MC samples
     for( int iSample = 0 ; iSample < skims.ntuples.size() ; iSample++){
 
-      isMC_= true;
       TFile* outputFile = new TFile("plotObs_"+skims.regionNames[region]+"_baseline_"+skims.sampleName[iSample]+".root","UPDATE");
 
       RA2bTree* ntuple = skims.ntuples[iSample];
@@ -241,9 +240,6 @@ void process(int region, string backgroundSample, string dataSample){
 	  if( skims.sampleName[iSample] == "GJets" && ( !isPromptPhoton(ntuple) || ntuple->madMinPhotonDeltaR < 0.4 ) ) continue;
 	}
 
-        if(!passHEMjetVeto(ntuple,iEvt,30)) continue;                       // HEM veto
-
- 
 	// ----------- weights -----------------
 	weight = lumi*ntuple->Weight*trig_eff(ntuple,iEvt);
         if( skims.sampleName[iSample] == "GJets" ) weight *= dRweights(ntuple);
