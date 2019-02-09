@@ -241,11 +241,11 @@ void process(int region, string backgroundSample, string dataSample){
 	  if( skims.sampleName[iSample] == "GJets" && ( !isPromptPhoton(ntuple) || ntuple->madMinPhotonDeltaR < 0.4 ) ) continue;
 	}
 
-        if(!passHEMjetVeto(ntuple, 30)) continue;                       // HEM veto
+        if(!passHEMjetVeto(ntuple,iEvt,30)) continue;                       // HEM veto
 
  
 	// ----------- weights -----------------
-	weight = lumi*ntuple->Weight*trig_eff(ntuple);
+	weight = lumi*ntuple->Weight*trig_eff(ntuple,iEvt);
         if( skims.sampleName[iSample] == "GJets" ) weight *= dRweights(ntuple);
         
 	// -------------------------------------
