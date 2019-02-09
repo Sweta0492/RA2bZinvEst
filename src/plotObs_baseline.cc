@@ -239,10 +239,10 @@ void process(int region, string backgroundSample, string dataSample){
 	  if( skims.sampleName[iSample] == "GJets" && ( !isPromptPhoton(ntuple) || ntuple->madMinPhotonDeltaR < 0.4 ) ) continue;
 	}
         
-        if(!passHEMjetVeto(ntuple,30)) continue;                       // HEM veto
+        if(!passHEMjetVeto(ntuple,iEvt,30)) continue;                       // HEM veto
      
 	// ----------- weights -----------------
-	weight = lumi*ntuple->Weight*trig_eff(ntuple);
+	weight = lumi*ntuple->Weight*trig_eff(ntuple,iEvt);
         // if( skims.sampleName[iSample] == "GJets" ) weight *= dRweights(ntuple);
         
 	// -------------------------------------
@@ -266,7 +266,6 @@ void process(int region, string backgroundSample, string dataSample){
       outputFile->Close();
     }// end loop over samples
 
-    
     // Data samples
     for( int iSample = 0 ; iSample < skims.dataNtuple.size() ; iSample++){
       isMC_ = false;
@@ -282,6 +281,7 @@ void process(int region, string backgroundSample, string dataSample){
       ntupleBranchStatus<RA2bTree>(ntuple);
       for( int iEvt = 0 ; iEvt < min(MAX_EVENTS,numEvents) ; iEvt++ ){
         ntuple->GetEntry(iEvt);
+
         if( iEvt % 1000000 == 0 ) cout << "data: " << iEvt << "/" << numEvents << endl;
         if( ( reg == skimSamples::kPhotonLDP ) && !RA2bLDPBaselinePhotonCut(ntuple) ) continue;   
         if( ( reg == skimSamples::kPhoton || reg == skimSamples::kPhotonLoose ) && !RA2bBaselinePhotonCut(ntuple) ) continue;
@@ -289,9 +289,7 @@ void process(int region, string backgroundSample, string dataSample){
         //HEM VETO
 
         if(ntuple->RunNum < 319077) continue; 
-        if(!passHEMjetVeto(ntuple,30)) continue; 
- 
-
+        if(!passHEMjetVeto(ntuple,iEvt,30)) continue; 
 
         /*......................Trigger Weight ...............................*/
 	bool pass_trigger=false;
