@@ -5,7 +5,7 @@ r.gROOT.SetBatch(True)
 r.gROOT.ProcessLine(".L ~/tdrstyle.C")
 r.gROOT.ProcessLine("setTDRStyle()")
 plot_dir="plotObs_plots"
-input_file_name = "plotObs_photon_baseline.root"
+input_file_name = "HEMplotObs_photon_baseline.root"
 
 input_file = r.TFile(input_file_name,"READ")    
 

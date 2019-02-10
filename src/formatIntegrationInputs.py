@@ -28,17 +28,17 @@ outputFileName=""
 if region == "signal" :
     nBins = 46
     
-    MChistoFileName = "~/nonHEM_baselineInputs.root"
+    MChistoFileName = "HEM_baselineInputs.root"
     MChistoTag = "AnalysisBins_BTag0_photon_baseline"
 
-    RzgHistoFileName = "~/nonHEM_RzGamma_PUweightOnly_signal_histo.root"
+    RzgHistoFileName = "~/HEM_RzGamma_PUweightOnly_signal_histo.root"
     RzgHistoTag = "AnalysisBins_BTag0_RzGamma_signal"
    
     fragmentationFileName = "../data/fragmentation_28_jan.txt"
  
     purityFileName = "../data/purity_2018.txt"
  
-    outputFileName = "gJets_signal_2018_nonHEM.dat"
+    outputFileName = "gJets_signal_2018_HEM.dat"
 
 elif region == "ldp" : 
     nBins = 59
