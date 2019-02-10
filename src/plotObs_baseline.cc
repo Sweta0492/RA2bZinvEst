@@ -287,7 +287,7 @@ void process(int region, string backgroundSample, string dataSample){
 
         // passing events only in non HEM RunNum
 
-//        if(ntuple->RunNum >= 319077) continue;                                    
+        if(ntuple->RunNum >= 319077) continue;                                    
  
          /*......................Trigger Weight ...............................*/
 	bool pass_trigger=false;

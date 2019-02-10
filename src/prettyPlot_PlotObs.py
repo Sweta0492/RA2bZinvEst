@@ -176,7 +176,7 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
         r.TH1D(h).Write()
     data_histo[0].Write()
 
-output_file = r.TFile("baselineInputs.root","RECREATE")
+output_file = r.TFile("nonHEM_baselineInputs.root","RECREATE")
 
 vars = []
 list = input_file.GetListOfKeys()
