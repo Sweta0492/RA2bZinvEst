@@ -155,11 +155,13 @@ int main(int argc, char** argv){
             if( sampleNames[iSample] == "GJets" && !( ntuple->madMinPhotonDeltaR>0.4 ) ) continue;
             if( sampleNames[iSample] == "GJets" && ntuple->Photons->at(0).Pt() < 200. ) continue;      
             if( ( region == 0 && !RA2bBaselineCut(ntuple) ) || ( region == 1 && !RA2bLDPBaselineCut(ntuple) ) ) continue;
+
+           //HEM veto    
             if(!passHEMjetVeto(ntuple,iEvt,30)) continue;        
            // weight applied here      
            
             weight = lumi*ntuple->Weight; 
-            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple,iEvt)*dRweights(ntuple);
+            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple,iEvt);/*dRweights(ntuple);*/
            
             for( int iPlot = 0 ; iPlot < plots.size() ; iPlot++ ){
                 if( sampleNames[iSample] == "GJets" ) 
@@ -173,7 +175,7 @@ int main(int argc, char** argv){
 
     TFile* outputFile;
     if( DR0p4 ) 
-        outputFile = new TFile("RzGamma_PUweightOnly_"+regionNames[region]+"_histo.root","RECREATE");
+        outputFile = new TFile("HEM_RzGamma_PUweightOnly_"+regionNames[region]+"_histo.root","RECREATE");
     else 
         outputFile = new TFile("RzGamma_DR0p05_PUweightOnly_"+regionNames[region]+"_histo.root","RECREATE");
 
