@@ -28,7 +28,7 @@ outputFileName=""
 if region == "signal" :
     nBins = 46
     
-    MChistoFileName = "plotObs_photon_baseline_2017.root"
+    MChistoFileName = "baselineInputs.root"
     MChistoTag = "AnalysisBins_BTag0_photon_baseline"
 
     RzgHistoFileName = "RzGamma_PUweightOnly_signal_histo_2017.root"

@@ -242,7 +242,7 @@ void process(int region, string backgroundSample, string dataSample){
 
 	// ----------- weights -----------------
 	weight = lumi*ntuple->Weight*trig_eff(ntuple,iEvt)*ntuple->NonPrefiringProb;
-       // if( skims.sampleName[iSample] == "GJets" ) weight *= dRweights(ntuple);
+        if( skims.sampleName[iSample] == "GJets" ) weight *= dRweights(ntuple);
         
 	// -------------------------------------
 
