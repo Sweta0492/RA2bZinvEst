@@ -28,17 +28,18 @@ outputFileName=""
 if region == "signal" :
     nBins = 46
     
-    MChistoFileName = "HEM_baselineInputs.root"
+    MChistoFileName = "nonHEM_baselineInputs.root"
     MChistoTag = "AnalysisBins_BTag0_photon_baseline"
 
-    RzgHistoFileName = "HEM_RzGamma_PUweightOnly_signal_histo.root"
+    RzgHistoFileName = "RzGamma_PUweightOnly_signal_histo.root"
     RzgHistoTag = "AnalysisBins_BTag0_RzGamma_signal"
    
     fragmentationFileName = "../data/fragmentation_28_jan.txt"
  
     purityFileName = "../data/purity_2018.txt"
  
-    outputFileName = "gJets_signal_HEM_2018.dat"
+    outputFileName = "gJets_signal_nonHEM_2018.dat"
+
 
 elif region == "ldp" : 
     nBins = 59
@@ -342,4 +343,4 @@ LUMItext.SetTextSize(0.045)
 #LUMItext.Draw()
 
 
-can.SaveAs("prediction_2018.png")
+#can.SaveAs("prediction_2018.png")
