@@ -108,6 +108,20 @@ int main(int argc, char** argv){
     samples.push_back(new RA2bTree(ZJets));
     sampleNames.push_back("ZJets");
 
+//************************************ MC weight Correction  **************************************************//
+   double MCwtCorr = 1.;
+   for( int i = 0 ; i < ZJetsFileNames.size() ; i++ ){
+
+          if      (ZJetsFileNames[i].Contains("HT-100to200")) MCwtCorr = 0.968;
+          else if (ZJetsFileNames[i].Contains("HT-200to400")) MCwtCorr = 1.018;
+          else if (ZJetsFileNames[i].Contains("HT-400to600")) MCwtCorr = 1.062;
+          else if (ZJetsFileNames[i].Contains("HT-600to800")) MCwtCorr = 1.083;
+          else if (ZJetsFileNames[i].Contains("HT-800to1200")) MCwtCorr = 1.098;
+          else if (ZJetsFileNames[i].Contains("HT-1200to2500")) MCwtCorr = 1.117;
+          else if (ZJetsFileNames[i].Contains("HT-2500toInf")) MCwtCorr = 1.145;
+  }
+   //***************************************************************************************************************//
+   
     if( region == 0 )
         skimType=BASE_DIR+"tree_GJet_CleanVars/";
     if( region == 1 )
@@ -161,7 +175,14 @@ int main(int argc, char** argv){
            // weight applied here      
            
             weight = lumi*ntuple->Weight; 
-            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple,iEvt);/*dRweights(ntuple);*/
+            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple,iEvt)*dRweights(ntuple);
+
+
+//******************************* Z Pt weight ********************************************/
+
+            if( sampleNames[iSample] == "ZJets" ) weight*= ZPtWeight(ntuple,iEvt)*MCwtCorr;
+
+//****************************************************************************************/
            
             for( int iPlot = 0 ; iPlot < plots.size() ; iPlot++ ){
                 if( sampleNames[iSample] == "GJets" ) 

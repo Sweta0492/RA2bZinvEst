@@ -31,7 +31,7 @@ if region == "signal" :
     MChistoFileName = "HEM_baselineInputs.root"
     MChistoTag = "AnalysisBins_BTag0_photon_baseline"
 
-    RzgHistoFileName = "~/HEM_RzGamma_PUweightOnly_signal_histo.root"
+    RzgHistoFileName = "HEM_RzGamma_PUweightOnly_signal_histo.root"
     RzgHistoTag = "AnalysisBins_BTag0_RzGamma_signal"
    
     fragmentationFileName = "../data/fragmentation_28_jan.txt"
