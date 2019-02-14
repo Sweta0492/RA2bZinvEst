@@ -176,7 +176,7 @@ template<typename ntupleType> bool cutFlow_filters(ntupleType* ntuple){
 
 
 template<typename ntupleType> double dRweights(ntupleType* ntuple){
-    return 1. /( (min(ntuple->HT, 900.0) - 497.4)*(0.0002288) + 1.0395);
+    return 1. /( (min(ntuple->HT, 900.0) - 489.2)*(0.00025739) + 1.0858);
 }
 
 template<typename ntupleType> double GJets0p4Weights(ntupleType* ntuple){
@@ -980,6 +980,19 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
           ntuple->GetEntry(iEvt);
           return ( 1 - h_jet->GetBinContent(h_jet->GetXaxis()->FindBin(ntuple->Jets->at(s).Eta()),h_jet->GetYaxis()->FindBin(ntuple->Jets->at(s).Pt()))) ;
  }
+
+ double MCwtCorr(RA2bTree* ntuple,int iEvt){
+          ntuple->GetEntry(iEvt);
+
+          if      (100 <= ntuple->madHT && ntuple->madHT <= 200) return 0.968;
+          else if (200 <= ntuple->madHT && ntuple->madHT <= 400) return 1.018;
+          else if (400 <= ntuple->madHT && ntuple->madHT <= 600) return 1.062;
+          else if (600 <= ntuple->madHT && ntuple->madHT <= 800) return 1.083;
+          else if (800 <= ntuple->madHT && ntuple->madHT <= 1200) return 1.098;
+          else if (1200<= ntuple->madHT && ntuple->madHT <= 2500) return 1.117;
+          else if (2500<= ntuple->madHT && ntuple->madHT <= 10000000) return 1.145;
+
+}
 
 
  /*****************.>>>>>>>>>>>>>>>>>>>>   Photon Trigger Efficiency <<<<<<<<<<<<<<<***********/

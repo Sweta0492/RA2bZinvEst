@@ -111,7 +111,7 @@ int main(int argc, char** argv){
 
 
 //************************************ MC weight Correction  **************************************************//
-
+/*
     double MCwtCorr = 1.;
     for( int i = 0 ; i < ZJetsFileNames.size() ; i++ ){
 
@@ -123,7 +123,7 @@ int main(int argc, char** argv){
 	  else if (ZJetsFileNames[i].Contains("HT-1200to2500")) MCwtCorr = 1.117;
           else if (ZJetsFileNames[i].Contains("HT-2500toInf")) MCwtCorr = 1.145;
     }
-
+*/
 //**************************************************************************************************************//
 
     if( region == 0 )
@@ -174,12 +174,12 @@ int main(int argc, char** argv){
             if( ( region == 0 && !RA2bBaselineCut(ntuple) ) || ( region == 1 && !RA2bLDPBaselineCut(ntuple) ) ) continue;
          
            // weight applied here      
-            weight = lumi*ntuple->Weight; 
-            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple,iEvt)*dRweights(ntuple)*ntuple->NonPrefiringProb;
+            weight = lumi*ntuple->Weight*ntuple->NonPrefiringProb; 
+            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple,iEvt)*dRweights(ntuple);
 
            /******************************* Z Pt weight ********************************************/
            
-            if( sampleNames[iSample] == "ZJets" ) weight*= ZPtWeight(ntuple,iEvt)*MCwtCorr;
+            if( sampleNames[iSample] == "ZJets" ) weight*= ZPtWeight(ntuple,iEvt)*MCwtCorr(ntuple,iEvt);
     
            //***************************************************************************************/ 
             
