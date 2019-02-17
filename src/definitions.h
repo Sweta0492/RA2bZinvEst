@@ -3,7 +3,7 @@
 #include "TH1F.h"
 #include "TFile.h"
 #include "TF1.h"
-
+#include "TEfficiency.h"
 // ==============================================
 // class for loading and retrieving GJets NLO
 // weights
@@ -985,23 +985,27 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
 
  /*****************.>>>>>>>>>>>>>>>>>>>>   Photon Trigger Efficiency <<<<<<<<<<<<<<<***********/
  /*****................................................................................********/
-  TFile *ftrigger = new TFile("../data/trigger_efficiency_PhotonPt_2016.root","READ");
-  std::vector<TF1*> fTrigEff_;
+  TFile *etrigger = new TFile("../data/trigger_efficiency_PhotonPt_2016.root","READ");
+  std::vector<TEfficiency*> eTrigEff_;
   void trig_eff_func()
 	{
-          fTrigEff_.clear();
-	  fTrigEff_.push_back((TF1*)ftrigger->Get("f_trig_eb"));
-	  fTrigEff_.push_back((TF1*)ftrigger->Get("f_trig_ec"));
+          eTrigEff_.clear();
+	  eTrigEff_.push_back((TEfficiency*)etrigger->Get("f_trig_eb"));
+	  eTrigEff_.push_back((TEfficiency*)etrigger->Get("f_trig_ec"));
 
 	}
   
  double trig_eff(RA2bTree* ntuple, int iEvt){
  ntuple->GetEntry(iEvt);
- if( ntuple->Photons_isEB->at(0) && fTrigEff_.at(0) != nullptr ) 
-       return  fTrigEff_.at(0)->Eval(max(double(205),ntuple->Photons->at(0).Pt()));  
+ if( ntuple->Photons_isEB->at(0) && eTrigEff_.at(0) != nullptr ) {
+       TH1F* htot = (TH1F*) eTrigEff_.at(0)->GetTotalHistogram();    
+       return  eTrigEff_.at(0)->GetEfficiency(min(htot->GetNbinsX(), htot->FindBin(ntuple->Photons->at(0).Pt())));  
+  } 
      
-  else if (!ntuple->Photons_isEB->at(0) && fTrigEff_.at(1) != nullptr ) 
-       return  fTrigEff_.at(1)->Eval(max(double(205),ntuple->Photons->at(0).Pt()));  
+  else if (!ntuple->Photons_isEB->at(0) && eTrigEff_.at(1) != nullptr ) {
+       TH1F* htot = (TH1F*) eTrigEff_.at(1)->GetTotalHistogram();    
+       return  eTrigEff_.at(1)->GetEfficiency(min(htot->GetNbinsX(), htot->FindBin(ntuple->Photons->at(0).Pt())));  
+  }
   else
        return 1;
    
