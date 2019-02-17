@@ -236,11 +236,7 @@ for i in range(nBins) :
        outputDict["trigWerr"].append(((dataEBHisto.GetBinContent(i+1)*0.00845451) + (dataEEHisto.GetBinContent(i+1)*0.0319185))/(dataEBHisto.GetBinContent(i+1)+dataEEHisto.GetBinContent(i+1) ))    
 
 
-    if ( i == 30 ) :
-        outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-9))
-        outputDict["REr1"].append(RzGamma.GetBinError(i+1-9)/outputDict["ZgR"][i-9])
-
-    elif ( i == 31 ) :
+    if ( i == 30 or i == 31 ) :
         outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-9))
         outputDict["REr1"].append(RzGamma.GetBinError(i+1-9)/outputDict["ZgR"][i-9])
 
@@ -248,11 +244,7 @@ for i in range(nBins) :
         outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-8))
         outputDict["REr1"].append(RzGamma.GetBinError(i+1-8)/outputDict["ZgR"][i-8])
   
-    elif ( i == 38 ) :
-        outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-17))
-        outputDict["REr1"].append(RzGamma.GetBinError(i+1-17)/outputDict["ZgR"][i-17])
-
-    elif ( i == 39 ) :
+    elif ( i == 38 or 1 == 39 ) :
         outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-17))
         outputDict["REr1"].append(RzGamma.GetBinError(i+1-17)/outputDict["ZgR"][i-17])
 
