@@ -3,7 +3,7 @@
 #include "TH1F.h"
 #include "TFile.h"
 #include "TF1.h"
-
+#include "TEfficiency.h"
 // ==============================================
 // class for loading and retrieving GJets NLO
 // weights
@@ -176,7 +176,7 @@ template<typename ntupleType> bool cutFlow_filters(ntupleType* ntuple){
 
 
 template<typename ntupleType> double dRweights(ntupleType* ntuple){
-    return 1. /( (min(ntuple->HT, 900.0) - 497.4)*(0.0002288) + 1.0395);
+    return 1. /( (min(ntuple->HT, 900.0) - 489.2)*(0.00025739) + 1.0858);
 }
 
 template<typename ntupleType> double GJets0p4Weights(ntupleType* ntuple){
@@ -984,29 +984,31 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
 
  /*****************.>>>>>>>>>>>>>>>>>>>>   Photon Trigger Efficiency <<<<<<<<<<<<<<<***********/
  /*****................................................................................********/
-  TFile *ftrigger = new TFile("../data/trigger_efficiency_PhotonPt_2018.root","READ");
-  std::vector<TF1*> fTrigEff_;
+ TFile *etrigger = new TFile("../data/trigger_efficiency_PhotonPt_2018.root","READ");
+  std::vector<TEfficiency*> eTrigEff_;
   void trig_eff_func()
 	{
-          fTrigEff_.clear();
-	  fTrigEff_.push_back((TF1*)ftrigger->Get("f_trig_eb"));
-	  fTrigEff_.push_back((TF1*)ftrigger->Get("f_trig_ec"));
+          eTrigEff_.clear();
+	  eTrigEff_.push_back((TEfficiency*)etrigger->Get("f_trig_eb"));
+	  eTrigEff_.push_back((TEfficiency*)etrigger->Get("f_trig_ec"));
 
 	}
   
-// double trig_eff(RA2bTree* ntuple, int iEvt){
-// ntuple->GetEntry(iEvt);
- double trig_eff(RA2bTree* ntuple,int iEvt){ 
- if( ntuple->Photons_isEB->at(0) && fTrigEff_.at(0) != nullptr ) 
-       return  fTrigEff_.at(0)->Eval(max(double(205),ntuple->Photons->at(0).Pt()));  
+ double trig_eff(RA2bTree* ntuple, int iEvt){
+ ntuple->GetEntry(iEvt);
+ if( ntuple->Photons_isEB->at(0) && eTrigEff_.at(0) != nullptr ) {
+       TH1F* htot = (TH1F*) eTrigEff_.at(0)->GetTotalHistogram();    
+       return  eTrigEff_.at(0)->GetEfficiency(min(htot->GetNbinsX(), htot->FindBin(ntuple->Photons->at(0).Pt())));  
+  } 
      
-  else if (!ntuple->Photons_isEB->at(0) && fTrigEff_.at(1) != nullptr ) 
-       return  fTrigEff_.at(1)->Eval(max(double(205),ntuple->Photons->at(0).Pt()));  
+  else if (!ntuple->Photons_isEB->at(0) && eTrigEff_.at(1) != nullptr ) {
+       TH1F* htot = (TH1F*) eTrigEff_.at(1)->GetTotalHistogram();    
+       return  eTrigEff_.at(1)->GetEfficiency(min(htot->GetNbinsX(), htot->FindBin(ntuple->Photons->at(0).Pt())));  
+  }
   else
        return 1;
    
- }
-
+} 
  /***********************************HEM veto  **********************************************/
 //////***************************************************************************************/
 
@@ -1052,6 +1054,21 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
     return ZPtWt; 
    }
 
+/******************************** MC weight correction *************************/
+/////////////////////////////////////////////////////////////////////////////////
+
+double MCwtCorr(RA2bTree* ntuple,int iEvt){
+          ntuple->GetEntry(iEvt);
+
+          if      (100 <= ntuple->madHT && ntuple->madHT <= 200) return 0.968;
+          else if (200 <= ntuple->madHT && ntuple->madHT <= 400) return 1.018;
+          else if (400 <= ntuple->madHT && ntuple->madHT <= 600) return 1.062;
+          else if (600 <= ntuple->madHT && ntuple->madHT <= 800) return 1.083;
+          else if (800 <= ntuple->madHT && ntuple->madHT <= 1200) return 1.098;
+          else if (1200<= ntuple->madHT && ntuple->madHT <= 2500) return 1.117;
+          else if (2500<= ntuple->madHT && ntuple->madHT <= 10000000) return 1.145;
+
+}
 
 
 
