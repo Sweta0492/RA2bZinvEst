@@ -3,6 +3,7 @@
 #include "TH1F.h"
 #include "TFile.h"
 #include "TF1.h"
+#include "TEfficiency.h"
 
 // ==============================================
 // class for loading and retrieving GJets NLO
@@ -997,7 +998,34 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
 
  /*****************.>>>>>>>>>>>>>>>>>>>>   Photon Trigger Efficiency <<<<<<<<<<<<<<<***********/
  /*****................................................................................********/
-  TFile *ftrigger = new TFile("../data/trigger_efficiency_PhotonPt_2017.root","READ");
+
+ TFile *etrigger = new TFile("../data/trigger_efficiency_PhotonPt_2017.root","READ");
+  std::vector<TEfficiency*> eTrigEff_;
+  void trig_eff_func()
+	{
+          eTrigEff_.clear();
+	  eTrigEff_.push_back((TEfficiency*)etrigger->Get("f_trig_eb"));
+	  eTrigEff_.push_back((TEfficiency*)etrigger->Get("f_trig_ec"));
+
+	}
+  
+ double trig_eff(RA2bTree* ntuple, int iEvt){
+ ntuple->GetEntry(iEvt);
+ if( ntuple->Photons_isEB->at(0) && eTrigEff_.at(0) != nullptr ) {
+       TH1F* htot = (TH1F*) eTrigEff_.at(0)->GetTotalHistogram();    
+       return  eTrigEff_.at(0)->GetEfficiency(min(htot->GetNbinsX(), htot->FindBin(ntuple->Photons->at(0).Pt())));  
+  } 
+     
+  else if (!ntuple->Photons_isEB->at(0) && eTrigEff_.at(1) != nullptr ) {
+       TH1F* htot = (TH1F*) eTrigEff_.at(1)->GetTotalHistogram();    
+       return  eTrigEff_.at(1)->GetEfficiency(min(htot->GetNbinsX(), htot->FindBin(ntuple->Photons->at(0).Pt())));  
+  }
+  else
+       return 1;
+   
+}
+
+/*  TFile *ftrigger = new TFile("../data/trigger_efficiency_PhotonPt_2017.root","READ");
   std::vector<TF1*> fTrigEff_;
   void trig_eff_func()
 	{
@@ -1018,7 +1046,7 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
        return 1;
    
  }
-
+ */
 /***************************************>>>>>> ZPt Reweighting <<<<<<<<<<<<<***********************************************/
 /***************************************************************************************************************************/
   // Z Pt weights  
