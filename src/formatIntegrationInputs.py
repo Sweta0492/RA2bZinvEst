@@ -230,19 +230,31 @@ for i in range(nBins) :
     outputDict["pEC"].append(purityEEAll[i])
     outputDict["pECerr"].append(purityEEerrAll[i]/outputDict["pEC"][i])
     
-    if ( i >= 30 and i < 38 ) :
-        outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-10))
-        outputDict["REr1"].append(RzGamma.GetBinError(i+1-10)/outputDict["ZgR"][i-10])
-        outputDict["trigWerr"].append(((dataEBHisto.GetBinContent(i+1-10)*0.00880785) + (dataEEHisto.GetBinContent(i+1-10)*0.0179556))/(dataEBHisto.GetBinContent(i+1-10)+dataEEHisto.GetBinContent(i+1-10) )) 
-    elif ( i >= 38 and i < 46 ) :
-        outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-18))
-        outputDict["REr1"].append(RzGamma.GetBinError(i+1-18)/outputDict["ZgR"][i-18])
-        outputDict["trigWerr"].append(((dataEBHisto.GetBinContent(i+1-10)*0.00880785) + (dataEEHisto.GetBinContent(i+1-10)*0.0179556))/(dataEBHisto.GetBinContent(i+1-10)+dataEEHisto.GetBinContent(i+1-10) )) 
+    if ( dataEBHisto.GetBinContent(i+1) == 0 and dataEEHisto.GetBinContent(i+1) == 0 ) :
+       outputDict["trigWerr"].append(0.0)       
+    else:
+       outputDict["trigWerr"].append(((dataEBHisto.GetBinContent(i+1)*0.00572808) + (dataEEHisto.GetBinContent(i+1)*0.0123223))/(dataEBHisto.GetBinContent(i+1)+dataEEHisto.GetBinContent(i+1) ))    
+
+
+    if ( i == 30 or i == 31) :
+        outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-9))
+        outputDict["REr1"].append(RzGamma.GetBinError(i+1-9)/outputDict["ZgR"][i-9])
+
+    elif ( i >= 32 and i < 38 ) :
+        outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-8))
+        outputDict["REr1"].append(RzGamma.GetBinError(i+1-8)/outputDict["ZgR"][i-8])
+  
+    elif ( i == 38 or i == 39 ) :
+        outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-17))
+        outputDict["REr1"].append(RzGamma.GetBinError(i+1-17)/outputDict["ZgR"][i-17])
+
+    elif ( i >= 40 and i < 46 ) :
+        outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-16))
+        outputDict["REr1"].append(RzGamma.GetBinError(i+1-16)/outputDict["ZgR"][i-16])
+
     else:
         outputDict["ZgR"].append(RzGamma.GetBinContent(i+1))
-        outputDict["REr1"].append(RzGamma.GetBinError(i+1)/outputDict["ZgR"][i])
-        outputDict["trigWerr"].append(((dataEBHisto.GetBinContent(i+1-10)*0.00880785) + (dataEEHisto.GetBinContent(i+1-10)*0.0179556))/(dataEBHisto.GetBinContent(i+1-10)+dataEEHisto.GetBinContent(i+1-10) )) 
-
+        outputDict["REr1"].append(RzGamma.GetBinError(i+1)/outputDict["ZgR"][i]) 
 
     if( outputDict["nEB"][i] == 0 and outputDict["nEC"][i] == 0 ):
         outputDict["purity"].append(1.)
