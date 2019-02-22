@@ -176,7 +176,7 @@ template<typename ntupleType> bool cutFlow_filters(ntupleType* ntuple){
 
 
 template<typename ntupleType> double dRweights(ntupleType* ntuple){
-    return 1. /( (min(ntuple->HT, 900.0) - 489.2)*(0.00025739) + 1.0858);
+	return 1. / ( (min(ntuple->HT, 900.0) *(0.0001665)) + 0.8229);
 }
 
 template<typename ntupleType> double GJets0p4Weights(ntupleType* ntuple){
@@ -1065,14 +1065,13 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
 
 double MCwtCorr(RA2bTree* ntuple,int iEvt){
           ntuple->GetEntry(iEvt);
-
-          if      (100 <= ntuple->madHT && ntuple->madHT <= 200) return 0.968;
-          else if (200 <= ntuple->madHT && ntuple->madHT <= 400) return 1.018;
-          else if (400 <= ntuple->madHT && ntuple->madHT <= 600) return 1.062;
-          else if (600 <= ntuple->madHT && ntuple->madHT <= 800) return 1.083;
-          else if (800 <= ntuple->madHT && ntuple->madHT <= 1200) return 1.098;
-          else if (1200<= ntuple->madHT && ntuple->madHT <= 2500) return 1.117;
-          else if (2500<= ntuple->madHT && ntuple->madHT <= 10000000) return 1.145;
+          if      (100 <= ntuple->madHT && ntuple->madHT <= 200) return 1.05713;
+          else if (200 <= ntuple->madHT && ntuple->madHT <= 400) return 1.20695;
+          else if (400 <= ntuple->madHT && ntuple->madHT <= 600) return 1.30533;
+          else if (600 <= ntuple->madHT && ntuple->madHT <= 800) return 1.38453;
+          else if (800 <= ntuple->madHT && ntuple->madHT <= 1200) return 1.40301;
+          else if (1200<= ntuple->madHT && ntuple->madHT <= 2500) return 1.42145;
+          else if (2500<= ntuple->madHT && ntuple->madHT <= 10000000) return 1.11697;    
 
 }
 
