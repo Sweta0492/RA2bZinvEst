@@ -12,14 +12,16 @@
 #include "plotterUtils.cc"
 #include "skimSamples.cc"
 #include "definitions.h"
+#include "EventListFilter.h"
 #include "RA2bTree.cc"
-
+#include "EventListFilter.h"
 using namespace std;
 
 static const int MAX_EVENTS=99999999;
 
 void process(int region, string backgroundSample, string dataSample){
 
+    EventListFilter filter("/uscms/homes/t/tmishra/CMSSW_9_4_8/src/RA2bZinvEst/data/Run2018_EGamma.txt");
     vector<int> trigger_indices = {140,141};
 
     skimSamples::region reg = static_cast<skimSamples::region>(region);
@@ -264,7 +266,11 @@ void process(int region, string backgroundSample, string dataSample){
       
       outputFile->Close();
     }// end loop over samples
-
+   
+    bool badECALcelleventlistfilter;
+    UInt_t          RunNum;
+    UInt_t          LumiBlockNum;
+    ULong64_t       EvtNum;
     // Data samples
     for( int iSample = 0 ; iSample < skims.dataNtuple.size() ; iSample++){
       
@@ -285,9 +291,16 @@ void process(int region, string backgroundSample, string dataSample){
         if( ( reg == skimSamples::kPhoton || reg == skimSamples::kPhotonLoose ) && !RA2bBaselinePhotonCut(ntuple) ) continue;
 
         // passing events only in non HEM RunNum
-        if(filter(ntuple,iEvt)) continue;         
-        if(ntuple->RunNum >= 319077) continue;                                    
- 
+        if(NoiseJetfilter(ntuple,iEvt)) continue;         
+        if(ntuple->RunNum >= 319077) continue;             
+
+        RunNum = ntuple->RunNum;
+        LumiBlockNum = ntuple->LumiBlockNum;
+        EvtNum= ntuple->EvtNum;               
+         
+        badECALcelleventlistfilter = filter.CheckEvent(RunNum,LumiBlockNum,EvtNum);          
+        if (badECALcelleventlistfilter == 0) continue; 
+        
          /*......................Trigger Weight ...............................*/
 	bool pass_trigger=false;
 	for( unsigned int itrig = 0 ; itrig < trigger_indices.size() ; itrig++ )
@@ -319,6 +332,7 @@ int main(int argc, char** argv){
     gROOT->ProcessLine("setTDRStyle()");
 
     trig_eff_func(); // trigger Efficiency Function
+    //EventListFilter filter("/uscms/homes/t/tmishra/CMSSW_9_4_8/src/RA2bZinvEst/data/Run2018_EGamma.txt");
     if(argc != 4 ){
       cerr << "please provide a region index, a background sample name, and a data sample name" << endl;
     }

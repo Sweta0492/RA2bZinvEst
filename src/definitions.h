@@ -84,6 +84,8 @@ template<typename ntupleType>void ntupleBranchStatus(ntupleType* ntuple){
   ntuple->fChain->SetBranchStatus("NonPrefiringProbDn",1);
   ntuple->fChain->SetBranchStatus("HTRatioDPhiFilter",1);
   ntuple->fChain->SetBranchStatus("RunNum",1);
+  ntuple->fChain->SetBranchStatus("LumiBlockNum",1);
+  ntuple->fChain->SetBranchStatus("EvtNum",1);
   ntuple->fChain->SetBranchStatus("Jets_jecFactor",1);
 }
 /******************************************************************/
@@ -1083,7 +1085,7 @@ double MCwtCorr(RA2bTree* ntuple,int iEvt){
 	 Double_t        MHTminusHTDeltaPhi4v2Recipe;
 	 const bool EENoiseCutbyAditee = true;
 
-  bool filter(RA2bTree* ntuple,int iEvt){
+  bool NoiseJetfilter(RA2bTree* ntuple,int iEvt){
 	   ntuple->GetEntry(iEvt);
 	   MHTPhiv2Recipe=-99.;
 
