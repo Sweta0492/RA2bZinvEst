@@ -244,7 +244,7 @@ for i in range(nBins) :
         outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-8))
         outputDict["REr1"].append(RzGamma.GetBinError(i+1-8)/outputDict["ZgR"][i-8])
   
-    elif ( i == 38 or 1 == 39 ) :
+    elif ( i == 38 or i == 39 ) :
         outputDict["ZgR"].append(RzGamma.GetBinContent(i+1-17))
         outputDict["REr1"].append(RzGamma.GetBinError(i+1-17)/outputDict["ZgR"][i-17])
 

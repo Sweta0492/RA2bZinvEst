@@ -227,7 +227,7 @@ void process(int region, string backgroundSample, string dataSample){
       double weight;
       for( int iEvt = 0 ; iEvt < min(MAX_EVENTS,numEvents) ; iEvt++ ){
 
-	//cout << "sample: " << skims.sampleName[iSample] << endl;
+	cout << "sample: " << skims.sampleName[iSample] << endl;
 	ntuple->GetEntry(iEvt);
         weight = 1.0;
 	if( iEvt % 1000000 == 0 ) cout << skims.sampleName[iSample] << ": " << iEvt << "/" << numEvents << endl;
@@ -239,12 +239,10 @@ void process(int region, string backgroundSample, string dataSample){
 	  if( skims.sampleName[iSample] == "QCD" && isPromptPhoton(ntuple) ) continue;
 	  if( skims.sampleName[iSample] == "GJets" && ( !isPromptPhoton(ntuple) || ntuple->madMinPhotonDeltaR < 0.4 ) ) continue;
 	}
-
 	// ----------- weights -----------------
-	weight = lumi*ntuple->Weight*ntuple->NonPrefiringProb;
-        if( skims.sampleName[iSample] == "GJets" ) weight *= dRweights(ntuple)*trig_eff(ntuple,iEvt);
-        
-	// -------------------------------------
+	weight = lumi*ntuple->Weight*ntuple->NonPrefiringProb*trig_eff(ntuple,iEvt);
+        if( skims.sampleName[iSample] == "GJets" ) weight *= dRweights(ntuple);
+       	// ----------------------------------------
 
 	for( int iPlot = 0 ; iPlot < plotsAllEvents.size() ; iPlot++ ){
 	  plotsAllEvents[iPlot].fill(ntuple,weight);
