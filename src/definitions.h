@@ -1076,6 +1076,59 @@ double MCwtCorr(RA2bTree* ntuple,int iEvt){
 }
 
 
+/***********************  ECalNoiseJetFilter **************************************/
+
+Double_t MHTPhiv2Recipe;
+         TVector3 MHT3Vecv2Recipe,temp3Vec;
+	 std::vector<int>  MHTminusHTJetsIdxv2Recipe,MHTJetsIdxv2Recipe;
+	 Double_t        MHTminusHTDeltaPhi1v2Recipe;
+	 Double_t        MHTminusHTDeltaPhi2v2Recipe;
+	 Double_t        MHTminusHTDeltaPhi3v2Recipe;
+	 Double_t        MHTminusHTDeltaPhi4v2Recipe;
+	 const bool EENoiseCutbyAditee = true;
+
+  bool filter(RA2bTree* ntuple,int iEvt){
+	   ntuple->GetEntry(iEvt);
+	   MHTPhiv2Recipe=-99.;
+
+	   MHTminusHTJetsIdxv2Recipe.clear();
+           MHTJetsIdxv2Recipe.clear();
+
+	   for(int j = 0; j < ntuple->Jets->size(); ++j){
+                     if(ntuple->Jets->at(j).Pt()>30 && fabs(ntuple->Jets->at(j).Eta()) < 5.0)
+				MHTJetsIdxv2Recipe.push_back(j);
+		     if(ntuple->Jets->at(j).Pt()>30 && fabs(ntuple->Jets->at(j).Eta()) > 2.4 && fabs(ntuple->Jets->at(j).Eta()) < 5.0)
+			        MHTminusHTJetsIdxv2Recipe.push_back(j);
+           }
+  
+
+           for(int i=0; i<MHTJetsIdxv2Recipe.size(); i++){
+              
+                     int jetIdx=MHTJetsIdxv2Recipe[i];
+                     temp3Vec.SetPtEtaPhi(ntuple->Jets->at(jetIdx).Pt(),ntuple->Jets->at(jetIdx).Eta(),ntuple->Jets->at(jetIdx).Phi());
+                     MHT3Vecv2Recipe-=temp3Vec;
+            }
+  		
+	    MHTPhiv2Recipe=MHT3Vecv2Recipe.Phi();
+
+	  if(MHTminusHTJetsIdxv2Recipe.size()>0)
+	    MHTminusHTDeltaPhi1v2Recipe=fabs(TVector2::Phi_mpi_pi(ntuple->Jets->at(MHTminusHTJetsIdxv2Recipe[0]).Phi() - MHTPhiv2Recipe ));
+	  if(MHTminusHTJetsIdxv2Recipe.size()>1)
+  	    MHTminusHTDeltaPhi2v2Recipe=fabs(TVector2::Phi_mpi_pi(ntuple->Jets->at(MHTminusHTJetsIdxv2Recipe[1]).Phi() - MHTPhiv2Recipe ));
+	  if(MHTminusHTJetsIdxv2Recipe.size()>2)
+	    MHTminusHTDeltaPhi3v2Recipe=fabs(TVector2::Phi_mpi_pi(ntuple->Jets->at(MHTminusHTJetsIdxv2Recipe[2]).Phi() - MHTPhiv2Recipe ));
+ 	  if(MHTminusHTJetsIdxv2Recipe.size()>3)
+	    MHTminusHTDeltaPhi4v2Recipe=fabs(TVector2::Phi_mpi_pi(ntuple->Jets->at(MHTminusHTJetsIdxv2Recipe[3]).Phi() - MHTPhiv2Recipe ));
+
+	
+	  if(EENoiseCutbyAditee){
+		    if((MHTminusHTJetsIdxv2Recipe.size()>0 && ntuple->Jets->at(MHTminusHTJetsIdxv2Recipe[0]).Pt()>250 && (MHTminusHTDeltaPhi1v2Recipe>2.6 || MHTminusHTDeltaPhi1v2Recipe<0.1)) || (MHTminusHTJetsIdxv2Recipe.size()>1 && ntuple->Jets->at(MHTminusHTJetsIdxv2Recipe[1]).Pt()>250 && (MHTminusHTDeltaPhi2v2Recipe>2.6 || MHTminusHTDeltaPhi2v2Recipe<0.1)))
+       			     return true;
+
+	            else
+   		      	    return false;
+	  }
+}
 
 
 

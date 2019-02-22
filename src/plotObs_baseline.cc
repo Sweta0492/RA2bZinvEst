@@ -287,7 +287,7 @@ void process(int region, string backgroundSample, string dataSample){
         if( ( reg == skimSamples::kPhoton || reg == skimSamples::kPhotonLoose ) && !RA2bBaselinePhotonCut(ntuple) ) continue;
  
         //HEM VETO
-
+        if(filter(ntuple,iEvt)) continue;  
         if(ntuple->RunNum < 319077) continue; 
         if(!passHEMjetVeto(ntuple,iEvt,30)) continue; 
 
