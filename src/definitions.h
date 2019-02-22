@@ -1088,14 +1088,17 @@ double MCwtCorr(RA2bTree* ntuple,int iEvt){
    ntuple->GetEntry(iEvt);
    MHTPhiv2Recipe=-99., PhiLeadJet=-99;
 
-   for(int j = 0; j < ntuple->Jets->size(); j++){
-     if(PhiLeadJet==-99.)
-        PhiLeadJet=ntuple->Jets->at(j).Phi();
+   if(ntuple->Jets->at(0).Pt()>30 && fabs(ntuple->Jets->at(0).Eta()) > 2.4 && fabs(ntuple->Jets->at(0).Eta()) < 5.0)
+        MHTminusHTJetsIdxv2Recipe.push_back(0);
+/*
+   for(int j = 0; j < ntuple->Jets->size(); ++j){
+ //    if(PhiLeadJet==-99.)
+ //       PhiLeadJet=ntuple->Jets->at(j).Phi();
     
-     if(ntuple->Jets->at(j).Pt()>30 && fabs(ntuple->Jets->at(j).Eta()) < 2.4)
-        HTJetsIdxv2Recipe.push_back(j);
-     if(ntuple->Jets->at(j).Pt()>30 && fabs(ntuple->Jets->at(j).Eta()) < 5.0)
-        MHTJetsIdxv2Recipe.push_back(j);
+ //    if(ntuple->Jets->at(j).Pt()>30 && fabs(ntuple->Jets->at(j).Eta()) < 2.4)
+ //       HTJetsIdxv2Recipe.push_back(j);
+ //    if(ntuple->Jets->at(j).Pt()>30 && fabs(ntuple->Jets->at(j).Eta()) < 5.0)
+ //      MHTJetsIdxv2Recipe.push_back(j);
      if(ntuple->Jets->at(j).Pt()>30 && fabs(ntuple->Jets->at(j).Eta()) > 2.4 && fabs(ntuple->Jets->at(j).Eta()) < 5.0)
         MHTminusHTJetsIdxv2Recipe.push_back(j);
    }
@@ -1105,9 +1108,9 @@ double MCwtCorr(RA2bTree* ntuple,int iEvt){
       int jetIdx=MHTJetsIdxv2Recipe[i];
       temp3Vec.SetPtEtaPhi(ntuple->Jets->at(jetIdx).Pt(),ntuple->Jets->at(jetIdx).Eta(),ntuple->Jets->at(jetIdx).Phi());
       MHT3Vecv2Recipe-=temp3Vec;
-      HT5v2Recipe+=ntuple->Jets->at(jetIdx).Pt();
+   //   HT5v2Recipe+=ntuple->Jets->at(jetIdx).Pt();
    }
-   MHTv2Recipe=MHT3Vecv2Recipe.Pt(); 
+   //MHTv2Recipe=MHT3Vecv2Recipe.Pt(); 
    MHTPhiv2Recipe=MHT3Vecv2Recipe.Phi();
   if(MHTminusHTJetsIdxv2Recipe.size()>0)
 	    MHTminusHTDeltaPhi1v2Recipe=fabs(TVector2::Phi_mpi_pi(ntuple->Jets->at(MHTminusHTJetsIdxv2Recipe[0]).Phi() - MHTPhiv2Recipe ));
@@ -1122,6 +1125,6 @@ double MCwtCorr(RA2bTree* ntuple,int iEvt){
 	    if((MHTminusHTJetsIdxv2Recipe.size()>0 && ntuple->Jets->at(MHTminusHTJetsIdxv2Recipe[0]).Pt()>250 && (MHTminusHTDeltaPhi1v2Recipe>2.6 || MHTminusHTDeltaPhi1v2Recipe<0.1)) || (MHTminusHTJetsIdxv2Recipe.size()>1 && ntuple->Jets->at(MHTminusHTJetsIdxv2Recipe[1]).Pt()>250 && (MHTminusHTDeltaPhi2v2Recipe>2.6 || MHTminusHTDeltaPhi2v2Recipe<0.1)))
             return true;
             else
-            return false;
-  }
+  */          return false;
+  //}
 }

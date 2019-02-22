@@ -265,7 +265,6 @@ void process(int region, string backgroundSample, string dataSample){
       outputFile->Close();
     }// end loop over samples
 
-    
     // Data samples
     for( int iSample = 0 ; iSample < skims.dataNtuple.size() ; iSample++){
       
@@ -286,7 +285,7 @@ void process(int region, string backgroundSample, string dataSample){
         if( ( reg == skimSamples::kPhoton || reg == skimSamples::kPhotonLoose ) && !RA2bBaselinePhotonCut(ntuple) ) continue;
 
         // passing events only in non HEM RunNum
-
+        //if(filter(ntuple,iEvt)) continue;         
         if(ntuple->RunNum >= 319077) continue;                                    
  
          /*......................Trigger Weight ...............................*/

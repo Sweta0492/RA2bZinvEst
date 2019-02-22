@@ -156,15 +156,14 @@ int main(int argc, char** argv){
            // weight applied here      
            
             weight = lumi*ntuple->Weight; 
-            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple,iEvt)*dRweights(ntuple);
+            
+            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple,iEvt)*dRweights(ntuple);  
 
 //******************************* Z Pt weight ********************************************/
 
             if( sampleNames[iSample] == "ZJets" ) weight*= ZPtWeight(ntuple,iEvt)*MCwtCorr(ntuple,iEvt);
 
-
 //***************************************************************************************/               
-           
             for( int iPlot = 0 ; iPlot < plots.size() ; iPlot++ ){
                 if( sampleNames[iSample] == "GJets" ) 
                    plots[iPlot].fill(ntuple,weight);
