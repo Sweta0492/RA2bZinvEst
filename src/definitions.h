@@ -4,6 +4,7 @@
 #include "TFile.h"
 #include "TF1.h"
 #include "TEfficiency.h"
+#include "TVector2.h"
 // ==============================================
 // class for loading and retrieving GJets NLO
 // weights
@@ -83,6 +84,7 @@ template<typename ntupleType>void ntupleBranchStatus(ntupleType* ntuple){
   ntuple->fChain->SetBranchStatus("NonPrefiringProbDn",1);
   ntuple->fChain->SetBranchStatus("HTRatioDPhiFilter",1);
   ntuple->fChain->SetBranchStatus("RunNum",1);
+  ntuple->fChain->SetBranchStatus("Jets_jecFactor",1);
 }
 /******************************************************************/
 /* - - - - - - - - - - - - cut flow function - - - - - - - - - -  */
@@ -176,7 +178,7 @@ template<typename ntupleType> bool cutFlow_filters(ntupleType* ntuple){
 
 
 template<typename ntupleType> double dRweights(ntupleType* ntuple){
-    return 1. /( (min(ntuple->HT, 900.0) - 489.2)*(0.00025739) + 1.0858);
+	return 1. / ( (min(ntuple->HT, 900.0) *(0.0001665)) + 0.8229);
 }
 
 template<typename ntupleType> double GJets0p4Weights(ntupleType* ntuple){
@@ -1060,15 +1062,66 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
 double MCwtCorr(RA2bTree* ntuple,int iEvt){
           ntuple->GetEntry(iEvt);
 
-          if      (100 <= ntuple->madHT && ntuple->madHT <= 200) return 0.968;
-          else if (200 <= ntuple->madHT && ntuple->madHT <= 400) return 1.018;
-          else if (400 <= ntuple->madHT && ntuple->madHT <= 600) return 1.062;
-          else if (600 <= ntuple->madHT && ntuple->madHT <= 800) return 1.083;
-          else if (800 <= ntuple->madHT && ntuple->madHT <= 1200) return 1.098;
-          else if (1200<= ntuple->madHT && ntuple->madHT <= 2500) return 1.117;
-          else if (2500<= ntuple->madHT && ntuple->madHT <= 10000000) return 1.145;
+          if      (100 <= ntuple->madHT && ntuple->madHT <= 200) return 1.05713;
+          else if (200 <= ntuple->madHT && ntuple->madHT <= 400) return 1.20695;
+          else if (400 <= ntuple->madHT && ntuple->madHT <= 600) return 1.30533;
+          else if (600 <= ntuple->madHT && ntuple->madHT <= 800) return 1.38453;
+          else if (800 <= ntuple->madHT && ntuple->madHT <= 1200) return 1.40301;
+          else if (1200<= ntuple->madHT && ntuple->madHT <= 2500) return 1.42145;
+          else if (2500<= ntuple->madHT && ntuple->madHT <= 10000000) return 1.11697;
 
 }
 
+//********************EcalNoiseJetFilter****************************************//
 
+  Double_t MHTPhiv2Recipe,MHTv2Recipe,HT5v2Recipe;
+  TVector3 MHT3Vecv2Recipe,temp3Vec;
+  vector<int> MHTJetsIdxv2Recipe, MHTminusHTJetsIdxv2Recipe, HTJetsIdxv2Recipe;
+  Double_t        MHTminusHTDeltaPhi1v2Recipe;
+  Double_t        MHTminusHTDeltaPhi2v2Recipe;
+  Double_t        MHTminusHTDeltaPhi3v2Recipe;
+  Double_t        MHTminusHTDeltaPhi4v2Recipe;
+  double PhiLeadJet;
+  const bool EENoiseCutbyAditee = true;
 
+  bool filter(RA2bTree* ntuple,int iEvt){
+   ntuple->GetEntry(iEvt);
+   MHTPhiv2Recipe=-99., PhiLeadJet=-99;
+
+   for(int j = 0; j < ntuple->Jets->size(); j++){
+     if(PhiLeadJet==-99.)
+        PhiLeadJet=ntuple->Jets->at(j).Phi();
+    
+     if(ntuple->Jets->at(j).Pt()>30 && fabs(ntuple->Jets->at(j).Eta()) < 2.4)
+        HTJetsIdxv2Recipe.push_back(j);
+     if(ntuple->Jets->at(j).Pt()>30 && fabs(ntuple->Jets->at(j).Eta()) < 5.0)
+        MHTJetsIdxv2Recipe.push_back(j);
+     if(ntuple->Jets->at(j).Pt()>30 && fabs(ntuple->Jets->at(j).Eta()) > 2.4 && fabs(ntuple->Jets->at(j).Eta()) < 5.0)
+        MHTminusHTJetsIdxv2Recipe.push_back(j);
+   }
+ 
+
+   for(int i=0; i<MHTJetsIdxv2Recipe.size(); i++){
+      int jetIdx=MHTJetsIdxv2Recipe[i];
+      temp3Vec.SetPtEtaPhi(ntuple->Jets->at(jetIdx).Pt(),ntuple->Jets->at(jetIdx).Eta(),ntuple->Jets->at(jetIdx).Phi());
+      MHT3Vecv2Recipe-=temp3Vec;
+      HT5v2Recipe+=ntuple->Jets->at(jetIdx).Pt();
+   }
+   MHTv2Recipe=MHT3Vecv2Recipe.Pt(); 
+   MHTPhiv2Recipe=MHT3Vecv2Recipe.Phi();
+  if(MHTminusHTJetsIdxv2Recipe.size()>0)
+	    MHTminusHTDeltaPhi1v2Recipe=fabs(TVector2::Phi_mpi_pi(ntuple->Jets->at(MHTminusHTJetsIdxv2Recipe[0]).Phi() - MHTPhiv2Recipe ));
+  if(MHTminusHTJetsIdxv2Recipe.size()>1)
+  	    MHTminusHTDeltaPhi2v2Recipe=fabs(TVector2::Phi_mpi_pi(ntuple->Jets->at(MHTminusHTJetsIdxv2Recipe[1]).Phi() - MHTPhiv2Recipe ));
+  if(MHTminusHTJetsIdxv2Recipe.size()>2)
+	    MHTminusHTDeltaPhi3v2Recipe=fabs(TVector2::Phi_mpi_pi(ntuple->Jets->at(MHTminusHTJetsIdxv2Recipe[2]).Phi() - MHTPhiv2Recipe ));
+  if(MHTminusHTJetsIdxv2Recipe.size()>3)
+	    MHTminusHTDeltaPhi4v2Recipe=fabs(TVector2::Phi_mpi_pi(ntuple->Jets->at(MHTminusHTJetsIdxv2Recipe[3]).Phi() - MHTPhiv2Recipe ));
+
+  if(EENoiseCutbyAditee){
+	    if((MHTminusHTJetsIdxv2Recipe.size()>0 && ntuple->Jets->at(MHTminusHTJetsIdxv2Recipe[0]).Pt()>250 && (MHTminusHTDeltaPhi1v2Recipe>2.6 || MHTminusHTDeltaPhi1v2Recipe<0.1)) || (MHTminusHTJetsIdxv2Recipe.size()>1 && ntuple->Jets->at(MHTminusHTJetsIdxv2Recipe[1]).Pt()>250 && (MHTminusHTDeltaPhi2v2Recipe>2.6 || MHTminusHTDeltaPhi2v2Recipe<0.1)))
+            return true;
+            else
+            return false;
+  }
+}
