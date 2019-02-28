@@ -1087,7 +1087,7 @@ Double_t MHTPhiv2Recipe;
 	 Double_t        MHTminusHTDeltaPhi4v2Recipe;
 	 const bool EENoiseCutbyAditee = true;
 
-  bool filter(RA2bTree* ntuple,int iEvt){
+  bool NoiseJetfilter(RA2bTree* ntuple,int iEvt){
 	   ntuple->GetEntry(iEvt);
 	   MHTPhiv2Recipe=-99.;
 
