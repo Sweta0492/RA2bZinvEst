@@ -1075,3 +1075,15 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
     return ZPtWt; 
    }
 
+/***********************************  SF weights ***********************************/
+TFile *f_phoSF = new TFile("~/SF_rootFiles/2017_PhotonsLoose.root");
+TH2F* h_SFweight = (TH2F*)f_phoSF->Get("EGamma_SF2D");
+float photon_pt = 0; float photon_eta = 0;
+
+  double SFweights(RA2bTree* ntuple,int iEvt){
+        ntuple->GetEntry(iEvt);
+        photon_pt = ntuple->Photons->at(0).Pt();
+        photon_eta = ntuple->Photons->at(0).Eta();
+        if (photon_pt>500) photon_pt=499.9;
+        return ( h_SFweight->GetBinContent(h_SFweight->GetXaxis()->FindBin(photon_eta),h_SFweight->GetYaxis()->FindBin(photon_pt)));
+ }
