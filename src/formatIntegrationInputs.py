@@ -28,7 +28,7 @@ outputFileName=""
 if region == "signal" :
     nBins = 46
     
-    MChistoFileName = "plotObs_photon_baseline_2016.root"
+    MChistoFileName = "baselineInputs.root"
     MChistoTag = "AnalysisBins_BTag0_photon_baseline"
 
     RzgHistoFileName = "RzGamma_PUweightOnly_signal_histo_2016.root"
@@ -190,8 +190,8 @@ outputDict["pEB"]=[]
 outputDict["pEC"]=[]
 outputDict["pEBerr"]=[]
 outputDict["pECerr"]=[]
-outputDict["SF"]=scaleFactor
-outputDict["SFerr"]=[err/cv for cv,err in zip(scaleFactor,scaleFactorErr)]
+outputDict["SF"]=[]
+outputDict["SFerr"]=[]
 outputDict["trigW"]=[]
 outputDict["trigWsysErr"]=[]
 outputDict["trigWerr"]=[]
@@ -268,6 +268,8 @@ for i in range(nBins) :
     outputDict["DRlow"].append(0.000)
     outputDict["trigW"].append(1.0)
     outputDict["trigWsysErr"].append(0.02)
+    outputDict["SF"].append(1.0)
+    outputDict["SFerr"].append(0.0)
     
     outputDict["Yield"].append(outputDict["ZgR"][i]/outputDict["trigW"][i]/outputDict["SF"][i]*outputDict["f"][i]*(outputDict["nEB"][i]*outputDict["pEB"][i]+outputDict["nEC"][i]*outputDict["pEC"][i]))
     if( outputDict["nEB"][i] == 0 and outputDict["nEC"][i] != 0 ):
