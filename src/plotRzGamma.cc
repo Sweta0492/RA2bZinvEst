@@ -160,7 +160,7 @@ int main(int argc, char** argv){
            // weight applied here      
            
             weight = lumi*ntuple->Weight; 
-            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple,iEvt)*dRweights(ntuple);
+            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple,iEvt)*dRweights(ntuple)*SFweights(ntuple,iEvt);
 
 
            //******************************* Z Pt weight ********************************************/

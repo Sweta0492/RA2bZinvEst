@@ -242,7 +242,7 @@ void process(int region, string backgroundSample, string dataSample){
         if(!passHEMjetVeto(ntuple,iEvt,30)) continue;                       // HEM veto
      
 	// ----------- weights -----------------
-	weight = lumi*ntuple->Weight*trig_eff(ntuple,iEvt);
+	weight = lumi*ntuple->Weight*trig_eff(ntuple,iEvt)*SFweights(ntuple,iEvt);
         if( skims.sampleName[iSample] == "GJets" ) weight *= dRweights(ntuple);
         
 	// -------------------------------------
