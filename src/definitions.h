@@ -65,6 +65,7 @@ template<typename ntupleType>void ntupleBranchStatus(ntupleType* ntuple){
   ntuple->fChain->SetBranchStatus("NJets",1);
   ntuple->fChain->SetBranchStatus("BTags*",1);
   ntuple->fChain->SetBranchStatus("MHT",1);
+  ntuple->fChain->SetBranchStatus("MHTPhi",1);
   ntuple->fChain->SetBranchStatus("Weight",1);
   ntuple->fChain->SetBranchStatus("pu*",1);
   ntuple->fChain->SetBranchStatus("TriggerPass",1);
@@ -1016,17 +1017,29 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
  * ...................................................................................****/
 
 
-
+ double deltaPhi(double JetPhi,double MHTPhi) {return TVector2::Phi_mpi_pi(MHTPhi - JetPhi);}
+ 
  int StartHEM = 319077;
  bool isMC_, Run_number;
+ double MHTPhi,JetPhi,DeltaPhi;
 
  bool passHEMjetVeto(RA2bTree* ntuple,int iEvt,double ptThresh = 30) {
     ntuple->GetEntry(iEvt);
     if (!isMC_ && ntuple->RunNum < StartHEM) return true;
+    MHTPhi = ntuple->MHTPhi; 
+    
+
     for (int p = 0; p < ntuple->Jets->size(); p++){
-      if (-3.0 <= ntuple->Jets->at(p).Eta() && ntuple->Jets->at(p).Eta() <= -1.4 &&
-        -1.57 <= ntuple->Jets->at(p).Phi() && ntuple->Jets->at(p).Phi() <= -0.87 &&
-        ntuple->Jets->at(p).Pt() > ptThresh)
+      //if (-3.0 <= ntuple->Jets->at(p).Eta() && ntuple->Jets->at(p).Eta() <= -1.4 &&
+      //  -1.57 <= ntuple->Jets->at(p).Phi() && ntuple->Jets->at(p).Phi() <= -0.87 &&
+      //  ntuple->Jets->at(p).Pt() > ptThresh )
+      JetPhi = ntuple->Jets->at(p).Phi();
+      DeltaPhi = deltaPhi(JetPhi,MHTPhi);
+         
+      if (-3.2 <= ntuple->Jets->at(p).Eta() && ntuple->Jets->at(p).Eta() <= -1.2 &&
+        -1.77 <= ntuple->Jets->at(p).Phi() && ntuple->Jets->at(p).Phi() <= -0.67 &&
+         ntuple->Jets->at(p).Pt() > ptThresh && DeltaPhi < 0.5 )
+
         return false;
     } 
     return true;
@@ -1132,7 +1145,7 @@ Double_t MHTPhiv2Recipe;
 
 /***********************************  SF weights ************************************/
 
-TFile *f_phoSF = new TFile("~/SF_rootFiles/2018_PhotonsLoose.root");
+TFile *f_phoSF = new TFile("~/SF_rootFiles/Photons2018_SF_all.root");
 TH2F* h_SFweight = (TH2F*)f_phoSF->Get("EGamma_SF2D");
 float photon_pt = 0; float photon_eta = 0;
 
