@@ -1030,15 +1030,15 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
     
 
     for (int p = 0; p < ntuple->Jets->size(); p++){
-      //if (-3.0 <= ntuple->Jets->at(p).Eta() && ntuple->Jets->at(p).Eta() <= -1.4 &&
-      //  -1.57 <= ntuple->Jets->at(p).Phi() && ntuple->Jets->at(p).Phi() <= -0.87 &&
-      //  ntuple->Jets->at(p).Pt() > ptThresh )
-      JetPhi = ntuple->Jets->at(p).Phi();
-      DeltaPhi = deltaPhi(JetPhi,MHTPhi);
+      if (-3.0 <= ntuple->Jets->at(p).Eta() && ntuple->Jets->at(p).Eta() <= -1.4 &&                                   // old HEM veto
+        -1.57 <= ntuple->Jets->at(p).Phi() && ntuple->Jets->at(p).Phi() <= -0.87 &&
+        ntuple->Jets->at(p).Pt() > ptThresh )
+      //JetPhi = ntuple->Jets->at(p).Phi();
+      //DeltaPhi = deltaPhi(JetPhi,MHTPhi);
          
-      if (-3.2 <= ntuple->Jets->at(p).Eta() && ntuple->Jets->at(p).Eta() <= -1.2 &&
-        -1.77 <= ntuple->Jets->at(p).Phi() && ntuple->Jets->at(p).Phi() <= -0.67 &&
-         ntuple->Jets->at(p).Pt() > ptThresh && DeltaPhi < 0.5 )
+      //if (-3.2 <= ntuple->Jets->at(p).Eta() && ntuple->Jets->at(p).Eta() <= -1.2 &&                                // new HEM veto    
+      //  -1.77 <= ntuple->Jets->at(p).Phi() && ntuple->Jets->at(p).Phi() <= -0.67 &&
+      //   ntuple->Jets->at(p).Pt() > ptThresh && abs(DeltaPhi) < 0.5)
 
         return false;
     } 

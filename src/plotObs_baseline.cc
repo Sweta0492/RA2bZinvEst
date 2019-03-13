@@ -13,13 +13,13 @@
 #include "skimSamples.cc"
 #include "definitions.h"
 #include "RA2bTree.cc"
-#include "EventListFilter.h"
+//#include "EventListFilter.h"
 using namespace std;
 
 static const int MAX_EVENTS=99999999;
 
 void process(int region, string backgroundSample, string dataSample){
-    EventListFilter filter("/uscms/homes/t/tmishra/CMSSW_9_4_8/src/RA2bZinvEst/data/Run2018_EGamma.txt");
+    //EventListFilter filter("/uscms/homes/t/tmishra/CMSSW_9_4_8/src/RA2bZinvEst/data/Run2018_EGamma.txt");
     vector<int> trigger_indices = {140,141};
 
     skimSamples::region reg = static_cast<skimSamples::region>(region);
@@ -242,7 +242,7 @@ void process(int region, string backgroundSample, string dataSample){
         if(!passHEMjetVeto(ntuple,iEvt,30)) continue;                       // HEM veto
      
 	// ----------- weights -----------------
-	weight = lumi*ntuple->Weight*trig_eff(ntuple,iEvt)*SFweights(ntuple,iEvt);
+  	weight = lumi*ntuple->Weight*trig_eff(ntuple,iEvt)*SFweights(ntuple,iEvt);
         if( skims.sampleName[iSample] == "GJets" ) weight *= dRweights(ntuple);
         
 	// -------------------------------------
@@ -290,13 +290,14 @@ void process(int region, string backgroundSample, string dataSample){
         if( ( reg == skimSamples::kPhoton || reg == skimSamples::kPhotonLoose ) && !RA2bBaselinePhotonCut(ntuple) ) continue;
  
         //HEM VETO
-        //if(NoiseJetfilter(ntuple,iEvt)) continue;  
         if(ntuple->RunNum < 319077) continue; 
         if(!passHEMjetVeto(ntuple,iEvt,30)) continue; 
+        //if(passHEMjetVeto(ntuple,iEvt,30) == 0) cout<<"\tMHT:"<<ntuple->MHT<<"\tHT:"<<ntuple->HT<<"\tNJets:"<<ntuple->NJets<<"\tBTags:"<<ntuple->BTags<<"\n";   
         
-        RunNum = ntuple->RunNum;
-        LumiBlockNum = ntuple->LumiBlockNum;
-        EvtNum= ntuple->EvtNum;               
+        //if(NoiseJetfilter(ntuple,iEvt)) continue;  
+        //RunNum = ntuple->RunNum;
+        //LumiBlockNum = ntuple->LumiBlockNum;
+        //EvtNum= ntuple->EvtNum;               
          
         //badECALcelleventlistfilter = filter.CheckEvent(RunNum,LumiBlockNum,EvtNum); 
         //if (badECALcelleventlistfilter == 0) cout<<"\tMHT:"<<ntuple->MHT<<"\tHT:"<<ntuple->HT<<"\tNJets:"<<ntuple->NJets<<"\tBTags:"<<ntuple->BTags<<"\n";
