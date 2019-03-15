@@ -133,12 +133,8 @@ print fragFracErrDn
 print "------------------------------------------------------"
 
 print "================= ID SCALE FACTORS ==================="
-scaleFactorFile = TFile("../data/SFcorrections.Photons.root","READ")
-scaleFactor = [scaleFactorFile.Get("h_inc").GetBinContent(1)]*nBins
-scaleFactorErr = [scaleFactorFile.Get("h_inc").GetBinError(1)]*nBins
-print scaleFactor
-print scaleFactorErr
-print "------------------------------------------------------"
+scaleFactorFile = TFile("~/SF_rootFiles/SearchBinVsSF_2016.root","READ")
+scaleFactorHisto = TH1D(scaleFactorFile.Get("hSFvsSB"))
 
 print "================= PHOTON PURITY ==================="
 purityEBAll=[]
@@ -215,13 +211,17 @@ outputDict["YsysLow"]=[]
 poisZeroErr=1.67
 for i in range(nBins) :
     outputDict["binIndex"].append(i+1)
-    outputDict["nMCEBt"].append(GJetsEBHisto.GetBinContent(i+1)*scaleFactor[i])
-    outputDict["nMCECt"].append(GJetsEEHisto.GetBinContent(i+1)*scaleFactor[i])
-    outputDict["nMCGJ"].append(GJetsHisto.GetBinContent(i+1)*scaleFactor[i])
+    outputDict["SF"].append(1.0)
+    outputDict["SFerr"].append(scaleFactorHisto.GetBinContent(i+1))
+    outputDict["nMCEBt"].append(GJetsEBHisto.GetBinContent(i+1))
+    outputDict["nMCECt"].append(GJetsEEHisto.GetBinContent(i+1))
+    outputDict["nMCGJ"].append(GJetsHisto.GetBinContent(i+1))
+
     if( outputDict["nMCGJ"][i] == 0 ) :
-        outputDict["nMCerr"].append(sqrt(poisZeroErr*poisZeroErr+scaleFactorErr[i]*scaleFactorErr[i]/scaleFactor[i]/scaleFactor[i]))
+        outputDict["nMCerr"].append(sqrt(poisZeroErr*poisZeroErr+scaleFactorHisto.GetBinContent(i+1)*scaleFactorHisto.GetBinContent(i+1)))
     else:
-        outputDict["nMCerr"].append(sqrt(GJetsHisto.GetBinError(i+1)*GJetsHisto.GetBinError(i+1)/outputDict["nMCGJ"][i]/outputDict["nMCGJ"][i]+scaleFactorErr[i]*scaleFactorErr[i]/scaleFactor[i]/scaleFactor[i]))
+	outputDict["nMCerr"].append(sqrt(GJetsHisto.GetBinError(i+1)*GJetsHisto.GetBinError(i+1)/outputDict["nMCGJ"][i]/outputDict["nMCGJ"][i])+scaleFactorHisto.GetBinContent(i+1)*scaleFactorHisto.GetBinContent(i+1))
+
     outputDict["Nobs"].append(dataHisto.GetBinContent(i+1))
     outputDict["nEB"].append(dataEBHisto.GetBinContent(i+1))
     outputDict["pEB"].append(purityEBAll[i])
@@ -268,8 +268,6 @@ for i in range(nBins) :
     outputDict["DRlow"].append(0.000)
     outputDict["trigW"].append(1.0)
     outputDict["trigWsysErr"].append(0.02)
-    outputDict["SF"].append(1.0)
-    outputDict["SFerr"].append(0.0)
     
     outputDict["Yield"].append(outputDict["ZgR"][i]/outputDict["trigW"][i]/outputDict["SF"][i]*outputDict["f"][i]*(outputDict["nEB"][i]*outputDict["pEB"][i]+outputDict["nEC"][i]*outputDict["pEC"][i]))
     if( outputDict["nEB"][i] == 0 and outputDict["nEC"][i] != 0 ):
@@ -327,8 +325,6 @@ fitPad.SetTopMargin(.1)
 fitPad.Draw()
 RzgCorr = TH1F("RzgCorr","RzgCorr",nBins,0.5,nBins+0.5)
 for i in range(nBins):
-    #RzgCorr.SetBinContent(i+1,outputDict["ZgR"][i]/outputDict["trigW"][i]/outputDict["SF"][i])
-    #RzgCorr.SetBinError(i+1,sqrt(outputDict["REr1"][i]*outputDict["REr1"][i]+outputDict["trigWerr"][i]*outputDict["trigWerr"][i]+outputDict["SFerr"][i]*outputDict["SFerr"][i])*outputDict["ZgR"][i]/outputDict["trigW"][i]/outputDict["SF"][i])
     RzgCorr.SetBinContent(i+1,outputDict["Yield"][i])
 
 RzgCorr.SetMarkerStyle(8)
