@@ -108,24 +108,6 @@ int main(int argc, char** argv){
     samples.push_back(new RA2bTree(ZJets));
     sampleNames.push_back("ZJets");
 
-
-
-//************************************ MC weight Correction  **************************************************//
-/*
-    double MCwtCorr = 1.;
-    for( int i = 0 ; i < ZJetsFileNames.size() ; i++ ){
-
-          if      (ZJetsFileNames[i].Contains("HT-100to200")) MCwtCorr = 0.968;
-	  else if (ZJetsFileNames[i].Contains("HT-200to400")) MCwtCorr = 1.018;
-	  else if (ZJetsFileNames[i].Contains("HT-400to600")) MCwtCorr = 1.062;
-	  else if (ZJetsFileNames[i].Contains("HT-600to800")) MCwtCorr = 1.083;
-	  else if (ZJetsFileNames[i].Contains("HT-800to1200")) MCwtCorr = 1.098;
-	  else if (ZJetsFileNames[i].Contains("HT-1200to2500")) MCwtCorr = 1.117;
-          else if (ZJetsFileNames[i].Contains("HT-2500toInf")) MCwtCorr = 1.145;
-    }
-*/
-//**************************************************************************************************************//
-
     if( region == 0 )
         skimType=BASE_DIR+"tree_GJet_CleanVars/";
     if( region == 1 )
@@ -173,13 +155,12 @@ int main(int argc, char** argv){
             if( sampleNames[iSample] == "GJets" && ntuple->Photons->at(0).Pt() < 200. ) continue;      
             if( ( region == 0 && !RA2bBaselineCut(ntuple) ) || ( region == 1 && !RA2bLDPBaselineCut(ntuple) ) ) continue;
          
-           // weight applied here      
+           // various weights      
             weight = lumi*ntuple->Weight*ntuple->NonPrefiringProb; 
-            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple,iEvt)*dRweights(ntuple)*SFweights(ntuple,iEvt);
 
-           /******************************* Z Pt weight ********************************************/
-           
-            if( sampleNames[iSample] == "ZJets" ) weight*= ZPtWeight(ntuple,iEvt)*MCwtCorr(ntuple,iEvt);
+            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple)*dRweights(ntuple)*SFweights(ntuple);
+
+            if( sampleNames[iSample] == "ZJets" ) weight*= ZPtWeight(ntuple)*MCwtCorr(ntuple);
     
            //***************************************************************************************/ 
             
