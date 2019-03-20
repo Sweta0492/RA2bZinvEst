@@ -153,17 +153,17 @@ int main(int argc, char** argv){
             if( sampleNames[iSample] == "GJets" && !( ntuple->madMinPhotonDeltaR>0.4 ) ) continue;
             if( sampleNames[iSample] == "GJets" && ntuple->Photons->at(0).Pt() < 200. ) continue;      
             if( ( region == 0 && !RA2bBaselineCut(ntuple) ) || ( region == 1 && !RA2bLDPBaselineCut(ntuple) ) ) continue;
-           // weight applied here      
+
+            // various weights 
            
             weight = lumi*ntuple->Weight; 
             
-            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple,iEvt)*dRweights(ntuple)*SFweights(ntuple,iEvt);  
+            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple)*dRweights(ntuple)*SFweights(ntuple);  
 
-//******************************* Z Pt weight ********************************************/
+            if( sampleNames[iSample] == "ZJets" ) weight*= ZPtWeight(ntuple)*MCwtCorr(ntuple);
 
-            if( sampleNames[iSample] == "ZJets" ) weight*= ZPtWeight(ntuple,iEvt)*MCwtCorr(ntuple,iEvt);
-
-//***************************************************************************************/               
+            //***********************************************************************************/               
+           
             for( int iPlot = 0 ; iPlot < plots.size() ; iPlot++ ){
                 if( sampleNames[iSample] == "GJets" ) 
                    plots[iPlot].fill(ntuple,weight);

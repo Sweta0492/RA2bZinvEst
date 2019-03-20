@@ -180,7 +180,7 @@ template<typename ntupleType> bool cutFlow_filters(ntupleType* ntuple){
 
 
 template<typename ntupleType> double dRweights(ntupleType* ntuple){
-	return 1. / ( (min(ntuple->HT, 900.0) *(0.0001665)) + 0.8229);
+    return 1. / ( (min(ntuple->HT, 900.0) *(0.0001812)) + 0.8386);
 }
 
 template<typename ntupleType> double GJets0p4Weights(ntupleType* ntuple){
@@ -981,7 +981,7 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
    }
 
 
-   double prefiring_weight_jet(RA2bTree* ntuple,int unsigned s ){
+ double prefiring_weight_jet(RA2bTree* ntuple,int unsigned s ){
           return ( 1 - h_jet->GetBinContent(h_jet->GetXaxis()->FindBin(ntuple->Jets->at(s).Eta()),h_jet->GetYaxis()->FindBin(ntuple->Jets->at(s).Pt()))) ;
  }
 
@@ -998,8 +998,7 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
 
 	}
   
- double trig_eff(RA2bTree* ntuple, int iEvt){
- ntuple->GetEntry(iEvt);
+ double trig_eff(RA2bTree* ntuple){
  if( ntuple->Photons_isEB->at(0) && eTrigEff_.at(0) != nullptr ) {
        TH1F* htot = (TH1F*) eTrigEff_.at(0)->GetTotalHistogram();    
        return  eTrigEff_.at(0)->GetEfficiency(min(htot->GetNbinsX(), htot->FindBin(ntuple->Photons->at(0).Pt())));  
@@ -1015,20 +1014,28 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
 } 
  /***********************************HEM veto  **********************************************/
 //////***************************************************************************************/
+ 
+ double deltaPhi(double JetPhi,double MHTPhi) {return TVector2::Phi_mpi_pi(MHTPhi - JetPhi);}
 
  int StartHEM = 319077;
  bool isMC_, Run_number;
- bool passHEMjetVeto(RA2bTree* ntuple,int iEvt,double ptThresh = 30) {
-    ntuple->GetEntry(iEvt);
+ double MHTPhi,JetPhi,DeltaPhi; 
+ 
+ bool passHEMjetVeto(RA2bTree* ntuple, double ptThresh = 30) {
     if (!isMC_ && ntuple->RunNum < StartHEM) return true;
-    for (int p = 0; p < ntuple->Jets->size(); p++){
-      if (-3.0 <= ntuple->Jets->at(p).Eta() && ntuple->Jets->at(p).Eta() <= -1.4 &&
-        -1.57 <= ntuple->Jets->at(p).Phi() && ntuple->Jets->at(p).Phi() <= -0.87 &&
-        ntuple->Jets->at(p).Pt() > ptThresh)
-        return false;
+    MHTPhi = ntuple->MHTPhi;     
+
+   for (int p = 0; p < ntuple->Jets->size(); p++){
+   JetPhi = ntuple->Jets->at(p).Phi();
+   DeltaPhi = deltaPhi(JetPhi,MHTPhi);
+   if (-3.2 <= ntuple->Jets->at(p).Eta() && ntuple->Jets->at(p).Eta() <= -1.2 && 
+      -1.77 <= ntuple->Jets->at(p).Phi() && ntuple->Jets->at(p).Phi() <= -0.67 &&
+       ntuple->Jets->at(p).Pt() > ptThresh && abs(DeltaPhi) < 0.5)
+   
+    return false;
     } 
     return true;
-  };
+};
 
 
 /***************************************>>>>>> ZPt Reweighting <<<<<<<<<<<<<***********************************************/
@@ -1037,7 +1044,7 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
    Double_t ptBins[297] = {0.,1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.,13.,14.,15.,16.,17.,18.,19.,20.,21.,22.,23.,24.,25.,26.,27.,28.,29.,30.,31.,32.,33.,34.,35.,36.,37.,38.,39.,40.,41.,42.,43.,44.,45.,46.,47.,48.,49.,50.,51.,52.,53.,54.,55.,56.,57.,58.,59.,60.,61.,62.,63.,64.,65.,66.,67.,68.,69.,70.,71.,72.,73.,74.,75.,76.,77.,78.,79.,80.,81.,82.,83.,84.,85.,86.,87.,88.,89.,90.,91.,92.,93.,94.,95.,96.,97.,98.,99.,100.,101.,102.,103.,104.,105.,106.,107.,108.,109.,110.,111.,112.,113.,114.,115.,116.,117.,118.,119.,120.,121.,122.,123.,124.,125.,126.,127.,128.,129.,130.,131.,132.,133.,134.,135.,136.,137.,138.,139.,140.,141.,142.,143.,144.,145.,146.,147.,148.,149.,150.,151.,152.,153.,154.,155.,156.,157.,158.,159.,160.,161.,162.,163.,164.,165.,166.,167.,168.,169.,170.,171.,172.,173.,174.,175.,176.,177.,178.,179.,180.,181.,182.,183.,184.,185.,186.,187.,188.,189.,190.,191.,192.,193.,194.,195.,196.,197.,198.,199.,200.,202.,204.,206.,208.,210.,212.,214.,216.,218.,220.,222.,224.,226.,228.,230.,232.,234.,236.,238.,240.,242.,244.,246.,248.,250.,252.,254.,256.,258.,260.,262.,264.,266.,268.,270.,272.,274.,276.,278.,280.,282.,284.,286.,288.,290.,292.,294.,296.,298.,300.,304.,308.,312.,316.,320.,324.,328.,332.,336.,340.,344.,348.,352.,356.,360.,364.,368.,372.,376.,380.,384.,388.,392.,396.,400.,410.,420.,430.,440.,450.,460.,470.,480.,490.,500.,520.,540.,560.,580.,600.,650.,700.,750.,800.,900.,1000.};
    Double_t ptWgts[297] = {0.618, 0.629, 0.653, 0.693, 0.742, 0.801, 0.856, 0.904, 0.941, 0.975, 1.000, 1.021, 1.040, 1.055, 1.069, 1.085, 1.099, 1.109, 1.125, 1.134, 1.147, 1.155, 1.164, 1.167, 1.172, 1.174, 1.175, 1.173, 1.175, 1.173, 1.172, 1.171, 1.168, 1.164, 1.163, 1.157, 1.156, 1.147, 1.143, 1.143, 1.138, 1.137, 1.130, 1.122, 1.119, 1.116, 1.122, 1.112, 1.104, 1.103, 1.104, 1.096, 1.095, 1.092, 1.084, 1.082, 1.075, 1.074, 1.069, 1.074, 1.069, 1.061, 1.060, 1.062, 1.057, 1.053, 1.055, 1.055, 1.042, 1.043, 1.039, 1.038, 1.034, 1.036, 1.034, 1.040, 1.017, 1.022, 1.029, 1.019, 1.020, 1.004, 1.014, 1.021, 0.994, 1.008, 1.000, 0.997, 1.000, 0.992, 0.992, 0.994, 0.979, 0.976, 0.983, 0.977, 0.980, 0.970, 0.991, 0.980, 0.971, 0.974, 0.975, 0.975, 0.967, 0.973, 0.950, 0.958, 0.952, 0.968, 0.936, 0.964, 0.942, 0.950, 0.958, 0.951, 0.945, 0.939, 0.954, 0.947, 0.951, 0.930, 0.919, 0.920, 0.929, 0.913, 0.926, 0.945, 0.944, 0.928, 0.937, 0.908, 0.938, 0.926, 0.912, 0.919, 0.906, 0.919, 0.909, 0.899, 0.912, 0.917, 0.929, 0.887, 0.887, 0.884, 0.901, 0.905, 0.901, 0.915, 0.881, 0.877, 0.912, 0.872, 0.861, 0.869, 0.875, 0.867, 0.903, 0.884, 0.880, 0.854, 0.864, 0.881, 0.848, 0.898, 0.856, 0.887, 0.893, 0.853, 0.880, 0.844, 0.885, 0.822, 0.844, 0.834, 0.864, 0.869, 0.852, 0.819, 0.866, 0.857, 0.893, 0.812, 0.797, 0.877, 0.814, 0.827, 0.900, 0.853, 0.843, 0.820, 0.850, 0.859, 0.887, 0.846, 0.812, 0.855, 0.820, 0.785, 0.812, 0.845, 0.830, 0.829, 0.808, 0.791, 0.878, 0.798, 0.770, 0.794, 0.815, 0.833, 0.826, 0.795, 0.818, 0.782, 0.818, 0.779, 0.797, 0.785, 0.828, 0.755, 0.791, 0.740, 0.833, 0.804, 0.816, 0.842, 0.720, 0.789, 0.735, 0.805, 0.735, 0.748, 0.760, 0.842, 0.782, 0.756, 0.708, 0.760, 0.802, 0.772, 0.803, 0.777, 0.646, 0.710, 0.771, 0.736, 0.711, 0.756, 0.701, 0.743, 0.772, 0.721, 0.726, 0.703, 0.730, 0.755, 0.723, 0.692, 0.696, 0.717, 0.661, 0.736, 0.756, 0.701, 0.758, 0.739, 0.717, 0.643, 0.588, 0.679, 0.662, 0.710, 0.759, 0.702, 0.791, 0.726, 0.591, 0.681, 0.752, 0.651, 0.670, 0.667, 0.639, 0.595, 0.581, 0.634, 0.592, 0.659, 0.628, 0.536, 0.484, 0.568, 0.530, 0.676, 0.536};
   
-  double  ZPtWeight(RA2bTree* ntuple, int iEvt){
+  double  ZPtWeight(RA2bTree* ntuple){
       double ptZ = -1.0;
       int nGen =  ntuple->GenParticles_PdgId->size() ;
         for (int iGen = 0 ; iGen < nGen; ++iGen) {
@@ -1061,8 +1068,7 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
 /******************************** MC weight correction *************************/
 /////////////////////////////////////////////////////////////////////////////////
 
-double MCwtCorr(RA2bTree* ntuple,int iEvt){
-          ntuple->GetEntry(iEvt);
+double MCwtCorr(RA2bTree* ntuple){
 
           if      (100 <= ntuple->madHT && ntuple->madHT <= 200) return 1.05713;
           else if (200 <= ntuple->madHT && ntuple->madHT <= 400) return 1.20695;
@@ -1129,12 +1135,11 @@ double MCwtCorr(RA2bTree* ntuple,int iEvt){
  }
 
 /***********************************  SF weights ************************************/
-TFile *f_phoSF = new TFile("~/SF_rootFiles/2018_PhotonsLoose.root");
+TFile *f_phoSF = new TFile("~/SF_rootFiles/Photons2018_SF_all.root");
 TH2F* h_SFweight = (TH2F*)f_phoSF->Get("EGamma_SF2D");
 float photon_pt = 0; float photon_eta = 0;
 
-  double SFweights(RA2bTree* ntuple,int iEvt){
-        ntuple->GetEntry(iEvt);
+  double SFweights(RA2bTree* ntuple){
         photon_pt = ntuple->Photons->at(0).Pt();
         photon_eta = ntuple->Photons->at(0).Eta();
         if (photon_pt>500) photon_pt=499.9;
