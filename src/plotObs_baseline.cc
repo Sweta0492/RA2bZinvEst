@@ -239,10 +239,10 @@ void process(int region, string backgroundSample, string dataSample){
 	  if( skims.sampleName[iSample] == "GJets" && ( !isPromptPhoton(ntuple) || ntuple->madMinPhotonDeltaR < 0.4 ) ) continue;
 	}
         
-        if(!passHEMjetVeto(ntuple,iEvt,30)) continue;                       // HEM veto
+        if(!passHEMjetVeto(ntuple,30)) continue;                       // HEM veto
      
 	// ----------- weights -----------------
-  	weight = lumi*ntuple->Weight*trig_eff(ntuple,iEvt)*SFweights(ntuple,iEvt);
+  	weight = lumi*ntuple->Weight*trig_eff(ntuple)*SFweights(ntuple);
         if( skims.sampleName[iSample] == "GJets" ) weight *= dRweights(ntuple);
         
 	// -------------------------------------
@@ -291,7 +291,7 @@ void process(int region, string backgroundSample, string dataSample){
  
         //HEM VETO
         if(ntuple->RunNum < 319077) continue; 
-        if(!passHEMjetVeto(ntuple,iEvt,30)) continue; 
+        if(!passHEMjetVeto(ntuple,30)) continue; 
         //if(passHEMjetVeto(ntuple,iEvt,30) == 0) cout<<"\tMHT:"<<ntuple->MHT<<"\tHT:"<<ntuple->HT<<"\tNJets:"<<ntuple->NJets<<"\tBTags:"<<ntuple->BTags<<"\n";   
         
         //if(NoiseJetfilter(ntuple,iEvt)) continue;  

@@ -28,7 +28,7 @@ outputFileName=""
 if region == "signal" :
     nBins = 46
     
-    MChistoFileName = "HEM_baselineInputs.root"
+    MChistoFileName = "baselineInputs.root"
     MChistoTag = "AnalysisBins_BTag0_photon_baseline"
 
     RzgHistoFileName = "HEM_RzGamma_PUweightOnly_signal_histo.root"
@@ -36,7 +36,7 @@ if region == "signal" :
    
     fragmentationFileName = "../data/fragmentation_28_jan.txt"
  
-    purityFileName = "../data/purity_2018.txt"
+    purityFileName = "../data/purity_2018_0p4.txt"
  
     outputFileName = "gJets_signal_2018_HEM.dat"
 
@@ -133,11 +133,8 @@ print fragFracErrDn
 print "------------------------------------------------------"
 
 print "================= ID SCALE FACTORS ==================="
-scaleFactorFile = TFile("../data/SFcorrections.Photons.root","READ")
-scaleFactor = [scaleFactorFile.Get("h_inc").GetBinContent(1)]*nBins
-scaleFactorErr = [scaleFactorFile.Get("h_inc").GetBinError(1)]*nBins
-print scaleFactor
-print scaleFactorErr
+scaleFactorFile = TFile("~/SF_rootFiles/SearchBinVsSF_2018.root","READ")
+SFerrHisto = TH1D(scaleFactorFile.Get("hSFvsSB"))
 print "------------------------------------------------------"
 
 print "================= PHOTON PURITY ==================="
@@ -215,13 +212,17 @@ outputDict["YsysLow"]=[]
 poisZeroErr=1.67
 for i in range(nBins) :
     outputDict["binIndex"].append(i+1)
-    outputDict["nMCEBt"].append(GJetsEBHisto.GetBinContent(i+1)*scaleFactor[i])
-    outputDict["nMCECt"].append(GJetsEEHisto.GetBinContent(i+1)*scaleFactor[i])
-    outputDict["nMCGJ"].append(GJetsHisto.GetBinContent(i+1)*scaleFactor[i])
+    outputDict["SF"].append(1.0)
+    outputDict["SFerr"].append(SFerrHisto.GetBinContent(i+1))
+    outputDict["nMCEBt"].append(GJetsEBHisto.GetBinContent(i+1))
+    outputDict["nMCECt"].append(GJetsEEHisto.GetBinContent(i+1))
+    outputDict["nMCGJ"].append(GJetsHisto.GetBinContent(i+1))
+   
     if( outputDict["nMCGJ"][i] == 0 ) :
-        outputDict["nMCerr"].append(sqrt(poisZeroErr*poisZeroErr+scaleFactorErr[i]*scaleFactorErr[i]/scaleFactor[i]/scaleFactor[i]))
+        outputDict["nMCerr"].append(sqrt(poisZeroErr*poisZeroErr+SFerrHisto.GetBinContent(i+1)*SFerrHisto.GetBinContent(i+1)))
     else:
-        outputDict["nMCerr"].append(sqrt(GJetsHisto.GetBinError(i+1)*GJetsHisto.GetBinError(i+1)/outputDict["nMCGJ"][i]/outputDict["nMCGJ"][i]+scaleFactorErr[i]*scaleFactorErr[i]/scaleFactor[i]/scaleFactor[i]))
+	outputDict["nMCerr"].append(sqrt(GJetsHisto.GetBinError(i+1)*GJetsHisto.GetBinError(i+1)/outputDict["nMCGJ"][i]/outputDict["nMCGJ"][i])+SFerrHisto.GetBinContent(i+1)*SFerrHisto.GetBinContent(i+1))
+    
     outputDict["Nobs"].append(dataHisto.GetBinContent(i+1))
     outputDict["nEB"].append(dataEBHisto.GetBinContent(i+1))
     outputDict["pEB"].append(purityEBAll[i])

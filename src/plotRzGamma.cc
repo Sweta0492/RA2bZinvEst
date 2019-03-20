@@ -156,18 +156,16 @@ int main(int argc, char** argv){
             if( ( region == 0 && !RA2bBaselineCut(ntuple) ) || ( region == 1 && !RA2bLDPBaselineCut(ntuple) ) ) continue;
 
            //HEM veto    
-            if(!passHEMjetVeto(ntuple,iEvt,30)) continue;        
-           // weight applied here      
+            if(!passHEMjetVeto(ntuple,30)) continue;        
+           // various weights      
            
             weight = lumi*ntuple->Weight; 
-            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple,iEvt)*dRweights(ntuple)*SFweights(ntuple,iEvt);
 
+            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple)*dRweights(ntuple)*SFweights(ntuple);
 
-           //******************************* Z Pt weight ********************************************/
+            if( sampleNames[iSample] == "ZJets" ) weight*= ZPtWeight(ntuple)*MCwtCorr(ntuple);
 
-            if( sampleNames[iSample] == "ZJets" ) weight*= ZPtWeight(ntuple,iEvt)*MCwtCorr(ntuple,iEvt);
-
-           //****************************************************************************************/
+           //***********************************************************************/
            
             for( int iPlot = 0 ; iPlot < plots.size() ; iPlot++ ){
                 if( sampleNames[iSample] == "GJets" ) 
