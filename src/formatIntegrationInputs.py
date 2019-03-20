@@ -134,7 +134,7 @@ print "------------------------------------------------------"
 
 print "================= ID SCALE FACTORS ==================="
 scaleFactorFile = TFile("~/SF_rootFiles/SearchBinVsSF_2016.root","READ")
-scaleFactorHisto = TH1D(scaleFactorFile.Get("hSFvsSB"))
+SFerrHisto = TH1D(scaleFactorFile.Get("hSFvsSB"))
 
 print "================= PHOTON PURITY ==================="
 purityEBAll=[]
@@ -212,15 +212,15 @@ poisZeroErr=1.67
 for i in range(nBins) :
     outputDict["binIndex"].append(i+1)
     outputDict["SF"].append(1.0)
-    outputDict["SFerr"].append(scaleFactorHisto.GetBinContent(i+1))
+    outputDict["SFerr"].append(SFerrHisto.GetBinContent(i+1))
     outputDict["nMCEBt"].append(GJetsEBHisto.GetBinContent(i+1))
     outputDict["nMCECt"].append(GJetsEEHisto.GetBinContent(i+1))
     outputDict["nMCGJ"].append(GJetsHisto.GetBinContent(i+1))
 
     if( outputDict["nMCGJ"][i] == 0 ) :
-        outputDict["nMCerr"].append(sqrt(poisZeroErr*poisZeroErr+scaleFactorHisto.GetBinContent(i+1)*scaleFactorHisto.GetBinContent(i+1)))
+        outputDict["nMCerr"].append(sqrt(poisZeroErr*poisZeroErr+SFerrHisto.GetBinContent(i+1)*SFerrHisto.GetBinContent(i+1)))
     else:
-	outputDict["nMCerr"].append(sqrt(GJetsHisto.GetBinError(i+1)*GJetsHisto.GetBinError(i+1)/outputDict["nMCGJ"][i]/outputDict["nMCGJ"][i])+scaleFactorHisto.GetBinContent(i+1)*scaleFactorHisto.GetBinContent(i+1))
+	outputDict["nMCerr"].append(sqrt(GJetsHisto.GetBinError(i+1)*GJetsHisto.GetBinError(i+1)/outputDict["nMCGJ"][i]/outputDict["nMCGJ"][i])+SFerrHisto.GetBinContent(i+1)*SFerrHisto.GetBinContent(i+1))
 
     outputDict["Nobs"].append(dataHisto.GetBinContent(i+1))
     outputDict["nEB"].append(dataEBHisto.GetBinContent(i+1))

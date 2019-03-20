@@ -156,9 +156,9 @@ int main(int argc, char** argv){
             if( ( region == 0 && !RA2bBaselineCut(ntuple) ) || ( region == 1 && !RA2bLDPBaselineCut(ntuple) ) ) continue;
          
            // weight applied here      
-           
+            
             weight = lumi*ntuple->Weight*ntuple->NonPrefiringProb; 
-            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple,iEvt)*dRweights(ntuple)*SFweights(ntuple,iEvt);
+            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple)*dRweights(ntuple)*SFweights(ntuple);
            
             for( int iPlot = 0 ; iPlot < plots.size() ; iPlot++ ){
                 if( sampleNames[iSample] == "GJets" ) 

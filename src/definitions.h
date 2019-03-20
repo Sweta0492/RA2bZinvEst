@@ -175,7 +175,7 @@ template<typename ntupleType> bool cutFlow_filters(ntupleType* ntuple){
 
 
 template<typename ntupleType> double dRweights(ntupleType* ntuple){
-    return 1. / ( (min(ntuple->HT, 900.0) *(0.0001665)) + 0.8229); 
+    return 1. / ( (min(ntuple->HT, 900.0) *(0.0001812)) + 0.8386);
 }
 
 template<typename ntupleType> double GJets0p4Weights(ntupleType* ntuple){
@@ -995,8 +995,7 @@ TH2F* h_jet = (TH2F*)f1->Get("L1prefiring_jetptvseta_2017BtoF");
 
 	}
   
- double trig_eff(RA2bTree* ntuple, int iEvt){
- ntuple->GetEntry(iEvt);
+ double trig_eff(RA2bTree* ntuple){
  if( ntuple->Photons_isEB->at(0) && eTrigEff_.at(0) != nullptr ) {
        TH1F* htot = (TH1F*) eTrigEff_.at(0)->GetTotalHistogram();    
        return  eTrigEff_.at(0)->GetEfficiency(min(htot->GetNbinsX(), htot->FindBin(ntuple->Photons->at(0).Pt())));  
@@ -1016,16 +1015,14 @@ TFile *f_phoSF = new TFile("~/SF_rootFiles/Photons2016_SF_all.root");
 TH2F* h_SFweight = (TH2F*)f_phoSF->Get("EGamma_SF2D");
 float photon_pt = 0; float photon_eta = 0;
 
-  double SFweights(RA2bTree* ntuple,int iEvt){
-        ntuple->GetEntry(iEvt);
+ double SFweights(RA2bTree* ntuple){
         photon_pt = ntuple->Photons->at(0).Pt();
         photon_eta = ntuple->Photons->at(0).Eta();
         if (photon_pt>500) photon_pt=499.9;
         return ( h_SFweight->GetBinContent(h_SFweight->GetXaxis()->FindBin(photon_eta),h_SFweight->GetYaxis()->FindBin(photon_pt)));
  }
 
- double SFweightsErr(RA2bTree* ntuple,int iEvt){
-        ntuple->GetEntry(iEvt);
+ double SFweightsErr(RA2bTree* ntuple){
         photon_pt = ntuple->Photons->at(0).Pt();
         photon_eta = ntuple->Photons->at(0).Eta();
         if (photon_pt>500) photon_pt=499.9;

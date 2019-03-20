@@ -240,7 +240,7 @@ void process(int region, string backgroundSample, string dataSample){
 	  if( skims.sampleName[iSample] == "GJets" && ( !isPromptPhoton(ntuple) || ntuple->madMinPhotonDeltaR < 0.4 ) ) continue;
 	}
 	// ----------- weights -----------------
-	weight = lumi*ntuple->Weight*ntuple->NonPrefiringProb*trig_eff(ntuple,iEvt)*SFweights(ntuple,iEvt);
+	weight = lumi*ntuple->Weight*ntuple->NonPrefiringProb*trig_eff(ntuple)*SFweights(ntuple);
         if( skims.sampleName[iSample] == "GJets" ) weight *= dRweights(ntuple);
        	// ----------------------------------------
 
