@@ -158,9 +158,11 @@ int main(int argc, char** argv){
            
             weight = lumi*ntuple->Weight; 
             
-            if ( sampleNames[iSample] == "GJets" ) weight*= trig_eff(ntuple)*dRweights(ntuple)*SFweights(ntuple);  
+            if ( sampleNames[iSample] == "GJets" ) 
+			weight*= trig_eff(ntuple)*dRweights(ntuple)*SFweights(ntuple);  
 
-            if( sampleNames[iSample] == "ZJets" ) weight*= ZPtWeight(ntuple)*MCwtCorr(ntuple);
+            if( sampleNames[iSample] == "ZJets" ) 
+			weight*= ZPtWeight(ntuple)*MCwtCorr(ntuple);
 
             //***********************************************************************************/               
            
