@@ -215,10 +215,7 @@ for i in range(nBins) :
     outputDict["nMCEBt"].append(GJetsEBHisto.GetBinContent(i+1))
     outputDict["nMCECt"].append(GJetsEEHisto.GetBinContent(i+1))
     outputDict["nMCGJ"].append(GJetsHisto.GetBinContent(i+1))
-    if( outputDict["nMCGJ"][i] == 0 ) :
-        outputDict["nMCerr"].append(sqrt(poisZeroErr*poisZeroErr+SFerrHisto.GetBinContent(i+1)*SFerrHisto.GetBinContent(i+1)))
-    else:
-	outputDict["nMCerr"].append(sqrt(GJetsHisto.GetBinError(i+1)*GJetsHisto.GetBinError(i+1)/outputDict["nMCGJ"][i]/outputDict["nMCGJ"][i])+SFerrHisto.GetBinContent(i+1)*SFerrHisto.GetBinContent(i+1))
+    outputDict["nMCerr"].append(GJetsHisto.GetBinError(i+1))
 
     outputDict["Nobs"].append(dataHisto.GetBinContent(i+1))
     outputDict["nEB"].append(dataEBHisto.GetBinContent(i+1))
