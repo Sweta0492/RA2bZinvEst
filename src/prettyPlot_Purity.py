@@ -152,8 +152,10 @@ def plot(plot_var = "photonIsoChrgLowSieie_EE_photonLoose" ):
     ratio.Draw()
 
     can.SaveAs("../plots/"+plot_dir+"/"+plot_var+".png")
+    can.SaveAs("../plots/"+plot_dir+"/"+plot_var+".pdf")
     topPad.SetLogy()
     can.SaveAs("../plots/"+plot_dir+"/"+plot_var+"_LogY.png")
+    can.SaveAs("../plots/"+plot_dir+"/"+plot_var+"_LogY.pdf")
 
     output_file.cd()
     for h in samples_histo :
