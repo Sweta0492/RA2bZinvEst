@@ -154,7 +154,7 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
     LUMItext.Draw()
    
     SF = (1.1*(data_histo[0].Integral()/sum.Integral()))
-    scaleFactor = r.TText(.17,.02,"data/MC = "+str(round(data_histo[0].Integral()/sum.Integral(),2)))
+    scaleFactor = r.TText(.17,.02,"data/MC = "+str(round(data_histo[0].Integral()/sum.Integral(),1)))
     scaleFactor.SetNDC()
     scaleFactor.SetTextFont(43)
     scaleFactor.SetTextSize(16)
@@ -195,8 +195,10 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
     ratio.Draw()
 
     can.SaveAs("../plots/"+plot_dir+"/"+plot_var+".png")
+    can.SaveAs("../plots/"+plot_dir+"/"+plot_var+".pdf")
     topPad.SetLogy()
     can.SaveAs("../plots/"+plot_dir+"/"+plot_var+"_LogY.png")
+    can.SaveAs("../plots/"+plot_dir+"/"+plot_var+"_LogY.pdf")
 
     output_file.cd()
     for h in samples_histo :
