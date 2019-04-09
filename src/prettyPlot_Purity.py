@@ -113,19 +113,19 @@ def plot(plot_var = "photonIsoChrgLowSieie_EE_photonLoose" ):
     CMStext = r.TText(.17,.95,"CMS")
     CMStext.SetNDC()
     CMStext.SetTextFont(61)
-    CMStext.SetTextSize(0.08)
+    CMStext.SetTextSize(0.07)
     CMStext.Draw()
     
     SIMtext = r.TText(.28,.95,"preliminary")
     SIMtext.SetNDC()
     SIMtext.SetTextFont(52)
-    SIMtext.SetTextSize(0.08)
+    SIMtext.SetTextSize(0.07)
     SIMtext.Draw()
     
     LUMItext = r.TText(.65,.95,"13 TeV (41.X/fb)")
     LUMItext.SetNDC()
     LUMItext.SetTextFont(51)
-    LUMItext.SetTextSize(0.08)
+    LUMItext.SetTextSize(0.07)
     LUMItext.Draw()
 
     botPad.cd()
