@@ -175,7 +175,7 @@ template<typename ntupleType> bool cutFlow_filters(ntupleType* ntuple){
 
 
 template<typename ntupleType> double dRweights(ntupleType* ntuple){
-    return 1. / ( (min(ntuple->HT, 900.0) *(0.0001812)) + 0.8386);
+    return 1. / ( (min(ntuple->HT, 900.0) *(0.0001906)) + 0.8477);
 }
 
 template<typename ntupleType> double GJets0p4Weights(ntupleType* ntuple){
