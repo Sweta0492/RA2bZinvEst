@@ -1,3 +1,5 @@
+from ROOT import *
+from array import array
 from sys import argv
 import ROOT as r
 r.gROOT.SetBatch(True)
@@ -27,20 +29,14 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
               "TT_1200to2500",
               "TT_2500toInf"],
              ["Other_WWTo1L1Nu2Q",
-              "Other_WZTo1L1Nu2Q",
               "Other_WZTo1L3Nu",
-              "Other_WZZ",
               "Other_ZZTo2L2Q",
-              "Other_ZZZ",
-              "Other_TTTT",
               "Other_TTWJetsToLNu",
               "Other_TTWJetsToQQ",
               "Other_TTGJets",
               "Other_TTZToLLNuNu",
               "Other_TTZToQQ",
               "Other_ST_s",
-              "Other_ST_t_antitop",
-              "Other_ST_t_top",
               "Other_ST_tW_antitop",
               "Other_ST_tW_top"]]
     
@@ -79,6 +75,7 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
         if i == 0 : 
             data_histo.append(input_file.Get(plot_var+"_"+s))
             data_histo[-1].SetMarkerStyle(8)
+            data_histo[-1].SetMarkerSize(.8)
             data_histo[-1].SetName(plot_var+"_Data")
             if data_histo[-1]==None :
                 print "looking for:",plot_var+"_"+sample_name
@@ -102,7 +99,7 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
     botPad.SetBottomMargin(0.35);
     botPad.SetTopMargin(0.02);
     topPad.SetTopMargin(0.06);
-    topPad.SetBottomMargin(0.01);
+    topPad.SetBottomMargin(0.17);
     topPad.Draw();
     botPad.Draw();
     topPad.cd();
@@ -114,69 +111,100 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
     stack.SetMinimum(0.1)
 
     stack.GetYaxis().SetTitle("Events")
-    stack.GetYaxis().SetLabelFont(43);
-    stack.GetYaxis().SetLabelSize(24);
-    stack.GetYaxis().SetTitleFont(43);
-    stack.GetYaxis().SetTitleSize(24);
-    stack.GetYaxis().SetTitleOffset(1.5);
+    stack.GetXaxis().SetTitle(data_histo[0].GetTitle())
+    stack.GetYaxis().SetLabelFont(63);
+    stack.GetYaxis().SetLabelSize(14);
+    stack.GetYaxis().SetTitleFont(63);
+    stack.GetYaxis().SetTitleSize(20);
+    stack.GetYaxis().SetTitleOffset(1.6);
 
-    stack.GetXaxis().SetLabelFont(43);
-    stack.GetXaxis().SetLabelSize(24);
-    stack.GetXaxis().SetTitleFont(43);
-    stack.GetXaxis().SetTitleSize(24);
+    stack.GetXaxis().SetLabelFont(63);
+    stack.GetXaxis().SetLabelSize(14);
+    stack.GetXaxis().SetTitleFont(63);
+    stack.GetXaxis().SetTitleSize(20);
     stack.GetXaxis().SetTitleOffset(1.7);
 
     CMStext = r.TText(.17,.95,"CMS")
     CMStext.SetNDC()
     CMStext.SetTextFont(61)
-    CMStext.SetTextSize(0.08)
+    CMStext.SetTextSize(0.07)
     CMStext.Draw()
     
     SIMtext = r.TText(.28,.95,"preliminary")
     SIMtext.SetNDC()
     SIMtext.SetTextFont(52)
-    SIMtext.SetTextSize(0.08)
+    SIMtext.SetTextSize(0.07)
     SIMtext.Draw()
     
-    LUMItext = r.TText(.65,.95,"13 TeV (59X/fb)")
+    #LUMItext = r.TText(.65,.95,"13 TeV (21X/fb)")
+    LUMItext = r.TText(.65,.95,"13 TeV (59.6X/fb)")
     LUMItext.SetNDC()
     LUMItext.SetTextFont(51)
-    LUMItext.SetTextSize(0.08)
+    LUMItext.SetTextSize(0.07)
     LUMItext.Draw()
+   
+    SF = (1.1*(data_histo[0].Integral()/sum.Integral()))
+    scaleFactor = r.TText(.17,.02,"data/MC = "+str(round(data_histo[0].Integral()/sum.Integral(),1)))
+    scaleFactor.SetNDC()
+    scaleFactor.SetTextFont(43)
+    scaleFactor.SetTextSize(16)
+    scaleFactor.Draw()
+
+    leg = TLegend(.8,.6,.9,.9)
+    leg.SetBorderSize(0)
+    leg.SetFillColor(0)
+    for i,h in enumerate(samples_histo) :
+	    leg.AddEntry(h,samples_labels[i],"f")
+    
+    leg.AddEntry(data_histo[0],"data","p")
+    leg.Draw(); 
+
 
     botPad.cd()
     ratio = r.TH1D(data_histo[0])
     ratio.SetMarkerStyle(8)
+    ratio.SetMarkerSize(.8)
     ratio.SetName(plot_var+"_ratio")
     ratio.Divide(sum)
     ratio.GetYaxis().SetRangeUser(0,2)
     ratio.GetYaxis().SetTitle("Obs/Exp")
     ratio.GetXaxis().SetTitle(data_histo[0].GetTitle())
-    ratio.GetYaxis().SetLabelFont(43);
-    ratio.GetYaxis().SetLabelSize(24);
-    ratio.GetYaxis().SetTitleFont(43);
-    ratio.GetYaxis().SetTitleSize(24);
+    ratio.GetYaxis().SetLabelFont(63);
+    ratio.GetYaxis().SetLabelSize(14);
+    ratio.GetYaxis().SetTitleFont(63);
+    ratio.GetYaxis().SetTitleSize(20);
     ratio.GetYaxis().SetNdivisions(505);
-    ratio.GetYaxis().SetTitleOffset(1.5);
+    ratio.GetYaxis().SetTitleOffset(1.6);
 
-    ratio.GetXaxis().SetLabelFont(43);
-    ratio.GetXaxis().SetLabelSize(24);
-    ratio.GetXaxis().SetTitleFont(43);
-    ratio.GetXaxis().SetTitleSize(24);
-    ratio.GetXaxis().SetTitleOffset(2.8);
+    ratio.GetXaxis().SetLabelFont(63);
+    ratio.GetXaxis().SetLabelSize(14);
+    ratio.GetXaxis().SetTitleFont(63);
+    ratio.GetXaxis().SetTitleSize(20);
+    ratio.GetXaxis().SetTitleOffset(2.3);
 
     ratio.Draw()
+    
+    one = r.TLine(ratio.GetBinCenter(1)-ratio.GetBinWidth(1)/2.,1.,ratio.GetBinCenter(ratio.GetNbinsX())+ratio.GetBinWidth(ratio.GetNbinsX())/2.,1.);
+    avg = r.TLine(ratio.GetBinCenter(1)-ratio.GetBinWidth(1)/2.,data_histo[0].Integral()/sum.Integral(),ratio.GetBinCenter(ratio.GetNbinsX())+ratio.GetBinWidth(ratio.GetNbinsX())/2.,data_histo[0].Integral()/sum.Integral());
+    avg.SetLineColor(2);
+    avg.SetLineStyle(2);
+    one.SetLineStyle(2);
+    one.Draw();
+    avg.Draw();
+
 
     can.SaveAs("../plots/"+plot_dir+"/"+plot_var+".png")
+    can.SaveAs("../plots/"+plot_dir+"/"+plot_var+".pdf")
     topPad.SetLogy()
     can.SaveAs("../plots/"+plot_dir+"/"+plot_var+"_LogY.png")
+    can.SaveAs("../plots/"+plot_dir+"/"+plot_var+"_LogY.pdf")
 
     output_file.cd()
     for h in samples_histo :
         r.TH1D(h).Write()
     data_histo[0].Write()
 
-output_file = r.TFile("nonHEM_baselineInputs.root","RECREATE")
+output_file = r.TFile("baselineInputs.root","RECREATE")
 
 vars = []
 list = input_file.GetListOfKeys()
