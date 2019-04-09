@@ -34,7 +34,7 @@ if region == "signal" :
     RzgHistoFileName = "RzGamma_PUweightOnly_signal_histo_2017.root"
     RzgHistoTag = "AnalysisBins_BTag0_RzGamma_signal"
    
-    fragmentationFileName = "../data/fragmentation_28_jan.txt"
+    fragmentationFileName = "../data/fragmentation.allBs.sp0p4._com.txt"
  
     purityFileName = "../data/purity_2017_0p4.txt"
  
