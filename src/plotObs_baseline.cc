@@ -239,6 +239,8 @@ void process(int region, string backgroundSample, string dataSample){
 	  if( skims.sampleName[iSample] == "GJets" && ( !isPromptPhoton(ntuple) || ntuple->madMinPhotonDeltaR < 0.4 ) ) continue;
 	}
         
+
+        if ( ntuple->EvtNum % 1000 < 1000*21.0/59.6) continue; 
         if(!passHEMjetVeto(ntuple,30)) continue;                       // HEM veto
      
 	// ----------- weights -----------------
