@@ -230,6 +230,11 @@ CMStext.Draw()
 SIMtext.Draw()
 LUMItext.Draw()
 
+output_file = TFile("Final_purity_17MC.root","RECREATE")
+avgEB.Write()
+avgEE.Write()
+
+
 canAvg.SaveAs("../plots/purityResults/photonPurity_MHT.pdf")
 canAvg.SaveAs("../plots/purityResults/photonPurity_MHT.png")
 canAvg.SaveAs("../plots/purityResults/photonPurity_MHT.eps")

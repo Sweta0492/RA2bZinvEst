@@ -110,19 +110,19 @@ def plot(plot_var = "photonIsoChrgLowSieie_EB_photonLoose" ):
     CMStext = r.TText(.17,.95,"CMS")
     CMStext.SetNDC()
     CMStext.SetTextFont(61)
-    CMStext.SetTextSize(0.08)
+    CMStext.SetTextSize(0.07)
     CMStext.Draw()
     
     SIMtext = r.TText(.28,.95,"preliminary")
     SIMtext.SetNDC()
     SIMtext.SetTextFont(52)
-    SIMtext.SetTextSize(0.08)
+    SIMtext.SetTextSize(0.07)
     SIMtext.Draw()
     
     LUMItext = r.TText(.65,.95,"13 TeV (59.X/fb)")
     LUMItext.SetNDC()
     LUMItext.SetTextFont(51)
-    LUMItext.SetTextSize(0.08)
+    LUMItext.SetTextSize(0.07)
     LUMItext.Draw()
 
     botPad.cd()
@@ -149,8 +149,10 @@ def plot(plot_var = "photonIsoChrgLowSieie_EB_photonLoose" ):
     ratio.Draw()
 
     can.SaveAs("../plots/"+plot_dir+"/"+plot_var+".png")
+    can.SaveAs("../plots/"+plot_dir+"/"+plot_var+".pdf")
     topPad.SetLogy()
     can.SaveAs("../plots/"+plot_dir+"/"+plot_var+"_LogY.png")
+    can.SaveAs("../plots/"+plot_dir+"/"+plot_var+"_LogY.pdf")
 
     output_file.cd()
     for h in samples_histo :
