@@ -196,17 +196,17 @@ leg.Draw()
 
 CMStext = TText(200,1.01,"CMS")
 CMStext.SetTextFont(61)
-CMStext.SetTextSize(0.045)
+CMStext.SetTextSize(0.04)
 CMStext.Draw()
 
-SIMtext = TText(285,1.01,"preliminary")
+SIMtext = TText(300,1.01,"preliminary")
 SIMtext.SetTextFont(52)
-SIMtext.SetTextSize(0.045)
+SIMtext.SetTextSize(0.04)
 SIMtext.Draw()
 
-LUMItext = TText(600,1.01,"13 TeV (35.9/fb)")
+LUMItext = TText(740,1.01,"13 TeV (35.9/fb)")
 LUMItext.SetTextFont(51)
-LUMItext.SetTextSize(0.045)
+LUMItext.SetTextSize(0.04)
 LUMItext.Draw()
 
 can.SaveAs("../plots/purityResults/photonPurity_ALL_MHT.pdf")

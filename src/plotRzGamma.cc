@@ -196,11 +196,13 @@ int main(int argc, char** argv){
         can->RedrawAxis();
         can->GetFrame()->Draw();
     
-        if( DR0p4 )
+        if( DR0p4 ){
             can->SaveAs("../plots/RzGamma_plots/"+TString(plots[iPlot].histoMap[samples[0]]->GetName())+".png");
-        else
+            can->SaveAs("../plots/RzGamma_plots/"+TString(plots[iPlot].histoMap[samples[0]]->GetName())+".pdf");
+        }else{
             can->SaveAs("../plots/RzGamma_DR0p05_plots/"+TString(plots[iPlot].histoMap[samples[0]]->GetName())+".png");
-        
+            can->SaveAs("../plots/RzGamma_DR0p05_plots/"+TString(plots[iPlot].histoMap[samples[0]]->GetName())+".pdf");
+        }
    }
 
     outputFile->Close();

@@ -138,19 +138,19 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
     CMStext = r.TText(.17,.95,"CMS")
     CMStext.SetNDC()
     CMStext.SetTextFont(61)
-    CMStext.SetTextSize(0.08)
+    CMStext.SetTextSize(0.07)
     CMStext.Draw()
     
     SIMtext = r.TText(.28,.95,"preliminary")
     SIMtext.SetNDC()
     SIMtext.SetTextFont(52)
-    SIMtext.SetTextSize(0.08)
+    SIMtext.SetTextSize(0.07)
     SIMtext.Draw()
     
     LUMItext = r.TText(.65,.95,"13 TeV (35.9X/fb)")
     LUMItext.SetNDC()
     LUMItext.SetTextFont(51)
-    LUMItext.SetTextSize(0.08)
+    LUMItext.SetTextSize(0.07)
     LUMItext.Draw()
    
     SF = (1.1*(data_histo[0].Integral()/sum.Integral()))
@@ -193,6 +193,15 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
     ratio.GetXaxis().SetTitleOffset(2.3);
 
     ratio.Draw()
+    
+    one = r.TLine(ratio.GetBinCenter(1)-ratio.GetBinWidth(1)/2.,1.,ratio.GetBinCenter(ratio.GetNbinsX())+ratio.GetBinWidth(ratio.GetNbinsX())/2.,1.);
+    avg = r.TLine(ratio.GetBinCenter(1)-ratio.GetBinWidth(1)/2.,data_histo[0].Integral()/sum.Integral(),ratio.GetBinCenter(ratio.GetNbinsX())+ratio.GetBinWidth(ratio.GetNbinsX())/2.,data_histo[0].Integral()/sum.Integral());
+    avg.SetLineColor(2);
+    avg.SetLineStyle(2);
+    one.SetLineStyle(2);
+    one.Draw();
+    avg.Draw();
+
 
     can.SaveAs("../plots/"+plot_dir+"/"+plot_var+".png")
     can.SaveAs("../plots/"+plot_dir+"/"+plot_var+".pdf")
