@@ -29,20 +29,14 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
               "TT_1200to2500",
               "TT_2500toInf"],
              ["Other_WWTo1L1Nu2Q",
-              "Other_WZTo1L1Nu2Q",
               "Other_WZTo1L3Nu",
-              "Other_WZZ",
               "Other_ZZTo2L2Q",
-              "Other_ZZZ",
-              "Other_TTTT",
               "Other_TTWJetsToLNu",
               "Other_TTWJetsToQQ",
               "Other_TTGJets",
               "Other_TTZToLLNuNu",
               "Other_TTZToQQ",
               "Other_ST_s",
-              "Other_ST_t_antitop",
-              "Other_ST_t_top",
               "Other_ST_tW_antitop",
               "Other_ST_tW_top"]]
     
@@ -133,23 +127,24 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
     CMStext = r.TText(.17,.95,"CMS")
     CMStext.SetNDC()
     CMStext.SetTextFont(61)
-    CMStext.SetTextSize(0.08)
+    CMStext.SetTextSize(0.07)
     CMStext.Draw()
     
     SIMtext = r.TText(.28,.95,"preliminary")
     SIMtext.SetNDC()
     SIMtext.SetTextFont(52)
-    SIMtext.SetTextSize(0.08)
+    SIMtext.SetTextSize(0.07)
     SIMtext.Draw()
     
-    LUMItext = r.TText(.65,.95,"13 TeV (59X/fb)")
+    #LUMItext = r.TText(.65,.95,"13 TeV (21X/fb)")
+    LUMItext = r.TText(.65,.95,"13 TeV (59.6X/fb)")
     LUMItext.SetNDC()
     LUMItext.SetTextFont(51)
-    LUMItext.SetTextSize(0.08)
+    LUMItext.SetTextSize(0.07)
     LUMItext.Draw()
    
     SF = (1.1*(data_histo[0].Integral()/sum.Integral()))
-    scaleFactor = r.TText(.17,.02,"data/MC = "+str(round(data_histo[0].Integral()/sum.Integral(),2)))
+    scaleFactor = r.TText(.17,.02,"data/MC = "+str(round(data_histo[0].Integral()/sum.Integral(),1)))
     scaleFactor.SetNDC()
     scaleFactor.SetTextFont(43)
     scaleFactor.SetTextSize(16)
@@ -188,10 +183,21 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
     ratio.GetXaxis().SetTitleOffset(2.3);
 
     ratio.Draw()
+    
+    one = r.TLine(ratio.GetBinCenter(1)-ratio.GetBinWidth(1)/2.,1.,ratio.GetBinCenter(ratio.GetNbinsX())+ratio.GetBinWidth(ratio.GetNbinsX())/2.,1.);
+    avg = r.TLine(ratio.GetBinCenter(1)-ratio.GetBinWidth(1)/2.,data_histo[0].Integral()/sum.Integral(),ratio.GetBinCenter(ratio.GetNbinsX())+ratio.GetBinWidth(ratio.GetNbinsX())/2.,data_histo[0].Integral()/sum.Integral());
+    avg.SetLineColor(2);
+    avg.SetLineStyle(2);
+    one.SetLineStyle(2);
+    one.Draw();
+    avg.Draw();
+
 
     can.SaveAs("../plots/"+plot_dir+"/"+plot_var+".png")
+    can.SaveAs("../plots/"+plot_dir+"/"+plot_var+".pdf")
     topPad.SetLogy()
     can.SaveAs("../plots/"+plot_dir+"/"+plot_var+"_LogY.png")
+    can.SaveAs("../plots/"+plot_dir+"/"+plot_var+"_LogY.pdf")
 
     output_file.cd()
     for h in samples_histo :
