@@ -34,7 +34,7 @@ if region == "signal" :
     RzgHistoFileName = "RzGamma_PUweightOnly_signal_histo_2016.root"
     RzgHistoTag = "AnalysisBins_BTag0_RzGamma_signal"
    
-    fragmentationFileName = "../data/fragmentation_28_jan.txt"
+    fragmentationFileName = "../data/fragmentation.allBs.sp0p4._com.txt"
  
     purityFileName = "../data/purity_2016.txt"
  
@@ -252,7 +252,7 @@ for i in range(nBins) :
     else:
         outputDict["ZgR"].append(RzGamma.GetBinContent(i+1))
         outputDict["REr1"].append(RzGamma.GetBinError(i+1)/outputDict["ZgR"][i])
-
+    
 
     if( outputDict["nEB"][i] == 0 and outputDict["nEC"][i] == 0 ):
         outputDict["purity"].append(1.)
