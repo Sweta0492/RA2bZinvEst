@@ -639,87 +639,94 @@ else
 template<typename ntupleType> double fillRA2b13Bins(ntupleType* ntuple){
   double MHT = ntuple->MHT;
   double HT = ntuple->HT;
+  double HT5 = ntuple->HT5;
+  double DeltaPhi1 = ntuple->DeltaPhi1;
+
+if( HT >= MHT && DeltaPhi1 >= ( (1.025*(HT5/HT)) - 0.5875) ){
 
   if( MHT > 250. && MHT < 300. ){
-    if( HT > 300. && HT < 500. )
-      if( ntuple->NJets>=7 )
-	     return -999999.;
+    if( HT > 300. && HT < 600. ) 
+      if( ntuple->NJets>=8 )
+	return -999999.;
       else
-	     return 1.;
-    else if( HT > 500. && HT < 1000. )
-      if( ntuple->NJets>=7 )
-	     return 1.;
+	return 1.;
+    else if( HT > 600. && HT < 1200. )
+      if( ntuple->NJets>=8 )
+	return 1.;
       else
-	     return 2.;
-    else if( HT > 1000. )
-      if( ntuple->NJets>=7 )
-	     return 2.;
+	return 2.;
+    else if( HT > 1200. ) 
+      if( ntuple->NJets>=8 )
+	return 2.;
       else
-	     return 3.;
+	return 3.;
   }else if( MHT > 300. && MHT < 350. ){
-    if( HT > 300. && HT < 500. ){
-      if(ntuple->NJets>=7)
-	     return -999999.;
+    if( HT > 300. && HT < 600. ){
+      if(ntuple->NJets>=8)
+	return -999999.;
       else
-	     return 4.;
-    }else if( HT > 500. && HT < 1000. ){
-      if(ntuple->NJets>=7)
-	     return 3.;
+	return 4.;
+    }else if( HT > 600. && HT < 1200. ){
+      if(ntuple->NJets>=8)
+	return 3.;
       else
-	     return 5.;
-    }else if( HT > 1000. ){
-      if(ntuple->NJets>=7)
-	     return 4.;
+	return 5.;
+    }else if( HT > 1200. ){
+      if(ntuple->NJets>=8)
+	return 4.;
       else
-	     return 6.;
+	return 6.;
+    }else 
+      return -999999.;
+  }else if( MHT > 350. && MHT < 600. ){
+    if( HT > 350. && HT < 600. ){
+      if(ntuple->NJets>=8)
+	return -999999.;
+      else
+	return 7.;
+    }else if( HT > 600. && HT < 1200. ){
+      if(ntuple->NJets>=8)
+	return 5.;
+      else
+	return 8.;
+    }else if( HT > 1200. ){
+      if(ntuple->NJets>=8)
+	return 6.;
+      else
+	return 9.;
+    }else 
+      return -999999.;
+  }else if( MHT > 600. && MHT < 850. ){
+    if( HT > 600. && HT < 1200. ){
+      if(ntuple->NJets>=8)
+	return 7.;
+      else
+	return 10.;
+    }else if( HT > 1200. ){
+      if(ntuple->NJets>=8)
+	return 8.;
+      else
+	return 11.;
+    }else 
+      return -999999.;
+  }else if( MHT > 850. ){
+    if( HT > 850. && HT < 1700. ){
+      if(ntuple->NJets>=8)
+	return 9.;
+      else
+	return 12.;
+    }else if( HT > 1700. ){
+      if(ntuple->NJets>=8)
+	return 10.;
+      else
+	return 13.;
     }else
       return -999999.;
-  }else if( MHT > 350. && MHT < 500. ){
-    if( HT > 350. && HT < 500. ){
-      if(ntuple->NJets>=7)
-	     return -999999.;
-      else
-	     return 7.;
-    }else if( HT > 500. && HT < 1000. ){
-      if(ntuple->NJets>=7)
-	     return 5.;
-      else
-	     return 8.;
-    }else if( HT > 1000. ){
-      if(ntuple->NJets>=7)
-	     return 6.;
-      else
-	     return 9.;
-    }else
-      return -999999.;
-  }else if( MHT > 500. && MHT < 750. ){
-    if( HT > 500. && HT < 1000. ){
-      if(ntuple->NJets>=7)
-	     return 7.;
-      else
-	     return 10.;
-    }else if( HT > 1000. ){
-      if(ntuple->NJets>=7)
-	     return 8.;
-      else
-	     return 11.;
-    }else
-      return -999999.;
-  }else if( MHT > 750. ){
-    if( HT > 750. && HT < 1500. ){
-      if(ntuple->NJets>=7)
-	     return 9.;
-      else
-	     return 12.;
-    }else if( HT > 1500. ){
-      if(ntuple->NJets>=7)
-	     return 10.;
-      else
-	     return 13.;
-    }else
-      return -999999.;
-  }else
+  }else 
     return -999999.;
+ }else
+   return -999999.;
+
 }
 
 template<typename ntupleType> double fillRA2b46Bins( ntupleType* ntuple ){
@@ -748,15 +755,15 @@ template<typename ntupleType> double fillRA2b59Bins( ntupleType* ntuple ){
   if( BTags != 0 ) return -999999.;
   int NJets = int(ntuple->NJets);
 
-  if( NJets == 2 ){
+  if(NJets >= 2 && NJets <= 3){
       return fillRA2b13Bins(ntuple);
-  }else if( NJets >= 3 && NJets <=4 ){
+  }else if( NJets >= 4 && NJets <= 5 ){
     return 13.+fillRA2b13Bins(ntuple);
-  }else if( NJets >= 5 && NJets <= 6 ){
+  }else if( NJets >= 6 && NJets <= 7 ){
     return 26.+fillRA2b13Bins(ntuple);
-  }else if( NJets >= 7 && NJets <= 8 ){
+  }else if( NJets >= 8 && NJets <= 9 ){
     return 39.+fillRA2b13Bins(ntuple);
-  }else if( NJets >= 9 ){
+  }else if( NJets >= 10 ){
     return 49.+fillRA2b13Bins(ntuple);
   }else
     return -999999.;
@@ -783,7 +790,7 @@ template<typename ntupleType> double fillRA2b174Bins( ntupleType* ntuple ){
   int BTags = int(ntuple->BTagsDeepCSV);
   int NJets = int(ntuple->NJets);
 
-  if( NJets == 2 ){
+  if( NJets >= 2 && NJets <= 3 ){
     if( BTags == 0 ){
       return fillRA2b10Bins(ntuple);
     }else if( BTags == 1 ){
@@ -792,7 +799,7 @@ template<typename ntupleType> double fillRA2b174Bins( ntupleType* ntuple ){
       return 20.+fillRA2b10Bins(ntuple);
     }else
       return -999999.;
-  }else if( NJets >= 3 && NJets <=4 ){
+  }else if(NJets >= 4 && NJets <= 5 ){
     if( BTags == 0 )
       return 30.+fillRA2b10Bins(ntuple);
     else if( BTags == 1 )
@@ -801,7 +808,7 @@ template<typename ntupleType> double fillRA2b174Bins( ntupleType* ntuple ){
       return 50.+fillRA2b10Bins(ntuple);
     else if( BTags >= 3 )
       return 60.+fillRA2b10Bins(ntuple);
-  }else if( NJets >= 5 && NJets <= 6 ){
+  }else if( NJets >= 6 && NJets <= 7 ){
     if( BTags == 0 )
       return 70.+fillRA2b10Bins(ntuple);
     else if( BTags == 1 )
@@ -810,7 +817,7 @@ template<typename ntupleType> double fillRA2b174Bins( ntupleType* ntuple ){
       return 90.+fillRA2b10Bins(ntuple);
     else if( BTags >= 3 )
       return 100.+fillRA2b10Bins(ntuple);
-  }else if( NJets >= 7 && NJets <= 8 ){
+  }else if( NJets >= 8 && NJets <= 9 ){
     if( BTags == 0 )
       return 110.+fillRA2b10Bins(ntuple);
     else if( BTags == 1 )
@@ -819,7 +826,7 @@ template<typename ntupleType> double fillRA2b174Bins( ntupleType* ntuple ){
       return 126.+fillRA2b10Bins(ntuple);
     else if( BTags >= 3 )
       return 134.+fillRA2b10Bins(ntuple);
-  }else if( NJets >= 9 ){
+  }else if( NJets >= 10 ){
     if( BTags == 0 )
       return 142.+fillRA2b10Bins(ntuple);
     else if( BTags == 1 )
