@@ -1,3 +1,4 @@
+import CMS_lumi
 from ROOT import *
 from array import array
 from sys import argv
@@ -8,12 +9,34 @@ r.gROOT.ProcessLine(".L ~/tdrstyle.C")
 r.gROOT.ProcessLine("setTDRStyle()")
 plot_dir="plotObs_plots"
 input_file_name = "plotObs_photon_baseline.root"
+#input_file_name = "plotObs_photonLDP_baseline.root"
 
 input_file = r.TFile(input_file_name,"READ")    
 
 def plot(plot_var = "MHT_photon_baseline_EE" ):
+#def plot(plot_var = "MHT_photonLDP_baseline_EE" ):
     
-    samples=[["QCD_200to300",
+    samples=[["Other_WWTo1L1Nu2Q",
+              "Other_WZTo1L1Nu2Q",
+              "Other_WZTo1L3Nu",
+              "Other_WZZ",
+              "Other_ZZTo2L2Q",
+              "Other_ZZZ",
+              "Other_TTTT",
+              "Other_TTWJetsToLNu",
+              "Other_TTWJetsToQQ",
+              "Other_TTZToLLNuNu",
+              "Other_TTZToQQ",
+              "Other_ST_s",
+              "Other_ST_t_antitop",
+              "Other_ST_t_top",
+              "Other_ST_tW_antitop",
+              "Other_ST_tW_top"],
+             ["TT_600to800",
+              "TT_800to1200",
+              "TT_1200to2500",
+              "TT_2500toInf"],
+             ["QCD_200to300",
               "QCD_300to500",
               "QCD_500to700",
               "QCD_700to1000",
@@ -23,28 +46,7 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
              ["GJets0p4_100to200",
               "GJets0p4_200to400",
               "GJets0p4_400to600",
-              "GJets0p4_600toInf"],
-             ["TT_600to800",
-              "TT_800to1200",
-              "TT_1200to2500",
-              "TT_2500toInf"],
-             ["Other_WWTo1L1Nu2Q",
-              "Other_WZTo1L1Nu2Q",
-              "Other_WZTo1L3Nu",
-              "Other_WZZ",
-              "Other_ZZTo2L2Q",
-              "Other_ZZZ",
-              "Other_TTTT",
-              "Other_TTWJetsToLNu",
-              "Other_TTWJetsToQQ",
-              "Other_TTGJets",
-              "Other_TTZToLLNuNu",
-              "Other_TTZToQQ",
-              "Other_ST_s",
-              "Other_ST_t_antitop",
-              "Other_ST_t_top",
-              "Other_ST_tW_antitop",
-              "Other_ST_tW_top"]]
+              "GJets0p4_600toInf"]]
     
     data_samples=["SinglePhoton_2016B",
                   "SinglePhoton_2016C",
@@ -55,8 +57,8 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
                   "SinglePhoton_2016H"
                   ]
 
-    samples_labels = ["QCD","GJets","TT","Others"]
-    samples_fill_color = [r.kGray,r.kGreen,r.kCyan,r.kRed+1]
+    samples_labels = ["Others","TT","QCD","GJets"]
+    samples_fill_color = [r.kRed+1,r.kCyan,r.kGray,r.kGreen]
     samples_line_color = [1,1,1,1]
     
     samples_histo=[]
@@ -108,21 +110,30 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
     topPad = r.TPad("topPad","topPad",0.,0.4,.99,.99);
     botPad = r.TPad("botPad","botPad",0.,0.01,.99,.39);
     botPad.SetBottomMargin(0.35);
-    botPad.SetTopMargin(0.02);
+    botPad.SetTopMargin(0.0);
     topPad.SetTopMargin(0.06);
-    topPad.SetBottomMargin(0.17);
+    topPad.SetBottomMargin(0.0);
     topPad.Draw();
     botPad.Draw();
     topPad.cd();
     
     stack.Draw("histo")    
-    data_histo[0].Draw("SAME,p")
+    data_histo[0].Draw("SAME,pe")
 
-    stack.SetMaximum(1.3*max(sum.GetMaximum(),data_histo[0].GetMaximum()))
-    stack.SetMinimum(0.1)
+    stack.SetMaximum(2.0*max(sum.GetMaximum(),data_histo[0].GetMaximum()))
+    stack.SetMinimum(1)
 
     stack.GetYaxis().SetTitle("Events")
-    stack.GetXaxis().SetTitle(data_histo[0].GetTitle())
+    stack.GetYaxis().SetLabelSize(0.055*1.15);
+    stack.GetYaxis().SetTitleFont(42);
+    stack.GetYaxis().SetTitleSize(0.06*1.15);
+    stack.GetYaxis().SetTitleOffset(0.9);
+
+    stack.GetXaxis().SetLabelSize(0.055*1.15);
+    stack.GetXaxis().SetTitleFont(42);
+    stack.GetXaxis().SetTitleSize(0.06*1.15);
+    stack.GetXaxis().SetTitleOffset(0.9);  
+    '''stack.GetXaxis().SetTitle(data_histo[0].GetTitle())
     stack.GetYaxis().SetLabelFont(63);
     stack.GetYaxis().SetLabelSize(14);
     stack.GetYaxis().SetTitleFont(63);
@@ -158,39 +169,58 @@ def plot(plot_var = "MHT_photon_baseline_EE" ):
     scaleFactor.SetNDC()
     scaleFactor.SetTextFont(43)
     scaleFactor.SetTextSize(16)
-    scaleFactor.Draw()
+    scaleFactor.Draw()'''
+    CMS_lumi.extraText = "       Preliminary"
+    CMS_lumi.writeExtraText = True
+    CMS_lumi.channelText = ""
+    CMS_lumi.CMS_lumi(can, 4, 0)
 
-    leg = TLegend(.8,.6,.9,.9)
+    leg = TLegend(.68,.71,.89,.93)    # for twiki
+    leg.SetTextSize(0.03);
+    leg.SetLineWidth(1)
+    leg.SetFillStyle(1001)
+    leg.SetFillColor(0)
+    leg.SetLineColor(1)
+    leg.SetBorderSize(1)
+    leg.SetFillColor(0)
+    
+    leg.AddEntry(data_histo[0],"Data","pe")
+    leg.AddEntry(samples_histo[3],"Signal \gamma+jets","f")
+    leg.AddEntry(samples_histo[2],"QCD","f")
+    leg.AddEntry(samples_histo[1],"t#bar{t}","f")
+    leg.AddEntry(samples_histo[0],"Others","f") 
+    leg.Draw(); 
+    
+
+    '''leg = TLegend(.8,.6,.9,.9)
     leg.SetBorderSize(0)
     leg.SetFillColor(0)
     for i,h in enumerate(samples_histo) :
 	    leg.AddEntry(h,samples_labels[i],"f")
     
     leg.AddEntry(data_histo[0],"data","p")
-    leg.Draw(); 
-
+    leg.Draw(); '''
 
     botPad.cd()
     ratio = r.TH1D(data_histo[0])
+
+    ratio.GetYaxis().SetLabelSize(0.055*1.15);
+    ratio.GetYaxis().SetTitleFont(42);
+    ratio.GetYaxis().SetTitleSize(0.09*1.15);
+    ratio.GetYaxis().SetTitleOffset(0.5);
+
+    ratio.GetXaxis().SetLabelSize(0.055*1.15);
+    ratio.GetXaxis().SetTitleFont(42);
+    ratio.GetXaxis().SetTitleSize(0.09*1.15);
+    ratio.GetXaxis().SetTitleOffset(0.8); 
+    
     ratio.SetMarkerStyle(8)
     ratio.SetMarkerSize(.8)
     ratio.SetName(plot_var+"_ratio")
     ratio.Divide(sum)
-    ratio.GetYaxis().SetRangeUser(0,2)
-    ratio.GetYaxis().SetTitle("Obs/Exp")
+    ratio.GetYaxis().SetRangeUser(0,1.9)
+    ratio.GetYaxis().SetTitle("Data/MC")
     ratio.GetXaxis().SetTitle(data_histo[0].GetTitle())
-    ratio.GetYaxis().SetLabelFont(63);
-    ratio.GetYaxis().SetLabelSize(14);
-    ratio.GetYaxis().SetTitleFont(63);
-    ratio.GetYaxis().SetTitleSize(20);
-    ratio.GetYaxis().SetNdivisions(505);
-    ratio.GetYaxis().SetTitleOffset(1.6);
-
-    ratio.GetXaxis().SetLabelFont(63);
-    ratio.GetXaxis().SetLabelSize(14);
-    ratio.GetXaxis().SetTitleFont(63);
-    ratio.GetXaxis().SetTitleSize(20);
-    ratio.GetXaxis().SetTitleOffset(2.3);
 
     ratio.Draw()
     
@@ -224,10 +254,10 @@ while(key != None ) :
     obj = key.ReadObj();
     if obj.InheritsFrom("TH1") :
         name = r.TString(obj.GetName())
-        if name.Contains("_QCD_300to500") : 
+        if name.Contains("_Other_WWTo1L1Nu2Q") : 
             #print name
             #print "integral:",obj.Integral()
-            vars.append(name.ReplaceAll("_QCD_300to500","").Data())
+            vars.append(name.ReplaceAll("_Other_WWTo1L1Nu2Q","").Data())
     else :
         print obj.Print()
     key = next()
